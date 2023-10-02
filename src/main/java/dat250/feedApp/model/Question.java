@@ -1,5 +1,7 @@
-package dat250.feedApp;
+package dat250.feedApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,9 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Question {
 
     @Id
@@ -33,6 +38,11 @@ public class Question {
     @Override
     public String toString() {
         return this.question;
+    }
+
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
+        vote.setQuestion(this);
     }
 
 

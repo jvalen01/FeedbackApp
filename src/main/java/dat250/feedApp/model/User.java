@@ -1,6 +1,8 @@
-package dat250.feedApp;
+package dat250.feedApp.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +13,9 @@ import java.util.List;
 @Setter
 @Getter
 @Table(name = "AppUser")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User {
 
     @Id
@@ -34,5 +39,15 @@ public class User {
         return username;
     }
 
+    // Add poll to user's list
+    public void addPoll(Poll poll) {
+        this.polls.add(poll);
+        poll.setUser(this);
+    }
 
+    // Add vote to user's list
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
+        vote.setUser(this);
+    }
 }

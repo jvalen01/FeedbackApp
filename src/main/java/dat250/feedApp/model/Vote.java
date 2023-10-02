@@ -1,5 +1,7 @@
-package dat250.feedApp;
+package dat250.feedApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +9,9 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Vote {
 
     @Id
@@ -15,16 +20,16 @@ public class Vote {
 
     private Boolean answer;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Question question;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private IoTDevice ioTDevice;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private User user;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Voter voter;
 
 

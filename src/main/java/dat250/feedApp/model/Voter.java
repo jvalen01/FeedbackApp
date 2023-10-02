@@ -1,6 +1,6 @@
-package dat250.feedApp;
+package dat250.feedApp.model;
 
-import dat250.feedApp.Vote;
+import dat250.feedApp.model.Vote;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

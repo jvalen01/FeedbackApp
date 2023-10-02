@@ -1,4 +1,4 @@
-package dat250.feedApp;
+package dat250.feedApp.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class IoTDevice {
 
     private Boolean status;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Poll poll;
 
     @OneToMany(mappedBy = "ioTDevice")

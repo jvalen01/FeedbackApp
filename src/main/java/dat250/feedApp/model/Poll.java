@@ -1,5 +1,7 @@
-package dat250.feedApp;
+package dat250.feedApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Poll {
 
 
@@ -29,7 +34,12 @@ public class Poll {
     @OneToMany(mappedBy = "poll")
     private List<IoTDevice> ioTDevices = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private User user;
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
+        question.setPoll(this);
+    }
 
 }
