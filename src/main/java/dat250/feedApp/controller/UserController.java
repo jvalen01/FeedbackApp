@@ -1,7 +1,7 @@
 package dat250.feedApp.controller;
 
 import dat250.feedApp.model.User;
-import dat250.feedApp.repository.UserRepository;
+import dat250.feedApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,18 +14,18 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     // GET all users
     @GetMapping
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userService.findAll();
     }
 
     // GET a single user by ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userService.findById(id);
         if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
         } else {
@@ -36,15 +36,15 @@ public class UserController {
     // POST (create) a user
     @PostMapping
     public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+        return userService.save(user);
     }
 
     // PUT (update) a user
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        if (userRepository.existsById(id)) {
+        if (userService.existsById(id)) {
             updatedUser.setId(id);  // Ensure the ID is set to the one from the path
-            return ResponseEntity.ok(userRepository.save(updatedUser));
+            return ResponseEntity.ok(userService.save(updatedUser));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -53,8 +53,8 @@ public class UserController {
     // DELETE a user
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
+        if (userService.existsById(id)) {
+            userService.deleteById(id);
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
