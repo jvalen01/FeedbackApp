@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Firebase from '../../firebaseConfig';
 import "../../styles/components.css";
 import Button from '../../Components/Button';
@@ -9,16 +10,43 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const navigate = useNavigate();
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await firebaseInstance.signUp(email, password);
-            alert("Registered successfully!");
-            // You can also redirect to another page, if required.
+            const userCredential = await firebaseInstance.signUp(email, password);
+            const idToken = await userCredential.user.getIdToken();
+            await registerInBackend(idToken);  // We'll define this next
         } catch (error) {
-            console.error("Error registering:", error.message);
+            console.error("Error registering with Firebase:", error.message);
             alert("Error registering: " + error.message);
         }
+    }
+
+    const registerInBackend = async (token) => {
+        try {
+            const response = await fetch('http://localhost:8080/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert("Successfully registered in backend!");
+                navigate('/login');  // <-- This line redirects to another page
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error("Error registering in backend:", error);
+            console.error("Detailed Error:", JSON.stringify(error, null, 2));
+            alert("Backend registration error: " + error.message);
+        }
+
     }
 
     return (

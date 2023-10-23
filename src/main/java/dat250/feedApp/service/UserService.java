@@ -14,6 +14,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public Optional<User> findByFirebaseUID(String firebaseUID) {
+        return userRepository.findByFirebaseUID(firebaseUID);
+    }
+
     public List<User> findAll() {
         return userRepository.findAll();
     }
