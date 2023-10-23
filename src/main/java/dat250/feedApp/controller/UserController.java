@@ -4,23 +4,27 @@ import dat250.feedApp.model.User;
 import dat250.feedApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    // GET all users
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.findAll();
+    public String getAllUsers(Model model) {
+        List<User> users = userService.findAll();
+        model.addAttribute("users", users);
+        return "users"; // This is the name of the view (template)
     }
+
 
     // GET a single user by ID
     @GetMapping("/{id}")
