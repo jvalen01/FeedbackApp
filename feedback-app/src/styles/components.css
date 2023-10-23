@@ -1,0 +1,19 @@
+.welcome-background {
+    background-image: url('../../public/background.png');
+    background-size: cover; /* This will cover the entire viewport */
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh; /* This will make it cover the full height of the viewport */
+}
+.beigeBox {
+    background-color: rgba(245, 245, 220, 0.9); /* Beige with 70% opacity */
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 40px; /* Increased padding for a larger box */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%; /* You can adjust this to your preference */
+    height: 60%;
+    max-width: 600px; /* Optional: Maximum width of the box */
+}
