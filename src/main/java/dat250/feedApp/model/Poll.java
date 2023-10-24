@@ -28,6 +28,11 @@ public class Poll {
 
     private String accessMode;
 
+    private String question;
+
+    private String code;
+
+
     @OneToMany(mappedBy = "poll")
     private List<Question> questions = new ArrayList<>();
 

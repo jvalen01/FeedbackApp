@@ -7,6 +7,7 @@ import dat250.feedApp.model.Poll;
 import dat250.feedApp.model.User;
 import dat250.feedApp.service.PollService;
 import dat250.feedApp.service.UserService;
+import dat250.feedApp.utils.PollCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +56,9 @@ public class PollController {
 
         // Associate the poll with the user
         poll.setUser(user);
+        // Generate a unique code for the poll
+        String uniqueCode = PollCodeGenerator.generateCode();
+        poll.setCode(uniqueCode);
 
         return pollService.save(poll);
     }
@@ -85,6 +89,16 @@ public class PollController {
         if (pollService.existsById(id)) {
             pollService.deleteById(id);
             return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/code/{code}")
+    public ResponseEntity<Poll> getPollByCode(@PathVariable String code) {
+        Optional<Poll> poll = pollService.findByCode(code);
+        if (poll.isPresent()) {
+            return ResponseEntity.ok(poll.get());
         } else {
             return ResponseEntity.notFound().build();
         }

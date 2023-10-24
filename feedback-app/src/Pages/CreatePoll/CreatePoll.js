@@ -49,7 +49,7 @@ function CreatePoll() {
 
     return (
         <div className="container">
-            <h2 className="title">Create Poll</h2>
+            <h2 className="title">Create A New Poll</h2>
             <form className="form" onSubmit={handleSubmit}>
                 <div className="input-group">
                     <label className="label">Poll Name:</label>

@@ -1,14 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect }  from 'react';
 import Button from '../../Components/Button';
 import { Link, useNavigate } from 'react-router-dom'; // Import Link and useHistory
 import Firebase from '../../firebaseConfig';
 import '../../styles/components.css';
 import './Home.css'
 
+
+
 const firebaseInstance = new Firebase();
 
 function Home() {
     const navigate = useNavigate();
+
+    // State to store user's email
+    const [userEmail, setUserEmail] = useState('');
+    const [pollCode, setPollCode] = useState('');
+
+
+    // Fetch user email on component mount
+    useEffect(() => {
+        if (firebaseInstance.auth.currentUser) {
+            setUserEmail(firebaseInstance.auth.currentUser.email);
+        }
+    }, []); // The empty dependency array ensures this runs only once when the component mounts
+
+
+    const fetchPollByCode = async () => {
+        const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
+        try {
+            const response = await fetch(`http://localhost:8080/api/polls/code/${pollCode}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                // Redirect to poll participation page, maybe using `useNavigate`
+                navigate(`/poll/${pollCode}`);
+            } else {
+                alert('Invalid poll code!');
+            }
+        } catch (error) {
+            console.error('Error fetching poll:', error);
+        }
+    };
+
 
     const handleLogout = async () => {
         try {
@@ -35,14 +72,19 @@ function Home() {
                 </div>
 
                 <div className="activitySection w-full mb-6">
-                    <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
-                    {/* Here you can map through notifications or activity related to user polls */}
-                    <p className="text-xl text-gray-600">No recent activity.</p>
+                    <h2 className="text-2xl font-bold mb-4">Participate in a poll</h2>
+                    <input
+                        type="text"
+                        value={pollCode}
+                        onChange={e => setPollCode(e.target.value)}
+                        placeholder="Enter poll code"
+                    />
+                    <Button text="Participate in Poll" onClick={fetchPollByCode} />
                 </div>
 
                 <div className="userSection w-full flex justify-between items-center">
                     <div>
-                        <h3 className="text-xl font-medium mb-2">Username</h3>
+                        <h3 className="text-xl font-medium mb-2">{userEmail}</h3> {/* Display user's email */}
                         <Link to="/profile">
                             <Button text="Profile & Settings" />
                         </Link>

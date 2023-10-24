@@ -6,6 +6,7 @@ import Welcome from './Pages/Welcome/Welcome';
 import Home from './Pages/Home/Home';
 import PrivateRoute from "./Components/PrivateRoute";
 import CreatePoll from "./Pages/CreatePoll/CreatePoll";
+import PollDisplay from "./Pages/PollDisplay/PollDisplay";
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
                 <Route path="/createPoll" element={<PrivateRoute><CreatePoll /></PrivateRoute>} />
+                <Route path="/poll/:code" element={<PollDisplay />} />
             </Routes>
         </Router>
     );

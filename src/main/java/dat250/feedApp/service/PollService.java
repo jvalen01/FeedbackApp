@@ -33,5 +33,9 @@ public class PollService {
     public void deleteById(Long id) {
         pollRepository.deleteById(id);
     }
+
+    public Optional<Poll> findByCode(String code) {
+        return pollRepository.findByCode(code);
+    }
 }
 
