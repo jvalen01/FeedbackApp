@@ -2,23 +2,25 @@ import React, { useState } from 'react';
 import Firebase from '../../firebaseConfig';
 import "../../styles/components.css";
 import Button from '../../Components/Button';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const firebaseInstance = new Firebase();
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate(); // Call the useNavigate hook
 
-  const handleLogin = async (e) => {
-      e.preventDefault();
-      try {
-          await firebaseInstance.signIn(email, password);
-          alert('Logged in successfully!');
-      } catch (error) {
-          alert('Error logging in: ' + error.message);
-      }
-  };
-
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            await firebaseInstance.signIn(email, password);
+            alert('Logged in successfully!');
+            navigate('/home'); // Redirect to home screen using navigate
+        } catch (error) {
+            alert('Error logging in: ' + error.message);
+        }
+    };
 
   return (
     <div className="welcome-background min-h-[80vh] flex items-center justify-center bg-gray-200">

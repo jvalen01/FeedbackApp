@@ -1,0 +1,10 @@
+.homeContainer {
+    /* Increase width for larger screens */
+    width: 80%; /* Adjust as needed */
+    max-width: 1400px; /* Prevent it from becoming too wide on very large screens */
+
+    /* Increase height */
+    min-height: 85vh; /* Adjust as needed */
+
+    /* ...rest of your styles remain the same */
+}
