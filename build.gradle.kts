@@ -28,8 +28,6 @@ dependencies {
 	implementation("org.testng:testng:7.1.0")
 
 
-
-
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.projectlombok:lombok")
