@@ -15,6 +15,14 @@ function Login() {
         e.preventDefault();
         try {
             await firebaseInstance.signIn(email, password);
+            const currentUser = firebaseInstance.auth.currentUser;
+            if (currentUser) {
+                const idToken = await currentUser.getIdToken();
+                console.log("ID Token:", idToken);
+                // You can now use the idToken for any subsequent backend calls if needed.
+            } else {
+                throw new Error('No user is currently signed in.');
+            }
             alert('Logged in successfully!');
             navigate('/home'); // Redirect to home screen using navigate
         } catch (error) {
