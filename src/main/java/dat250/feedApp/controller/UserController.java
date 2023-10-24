@@ -24,11 +24,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public String getAllUsers(Model model) {
-        List<User> users = userService.findAll();
-        model.addAttribute("users", users);
-        return "users"; // This is the name of the view (template)
+    public List<User> getAllUsers(Model model) {
+        return userService.findAll();
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<Object> registerUser(@RequestHeader("Authorization") String idToken) {

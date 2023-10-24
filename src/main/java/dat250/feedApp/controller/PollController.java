@@ -7,15 +7,16 @@ import dat250.feedApp.model.Poll;
 import dat250.feedApp.model.User;
 import dat250.feedApp.service.PollService;
 import dat250.feedApp.service.UserService;
+import dat250.feedApp.utils.FirebaseFunctions;
 import dat250.feedApp.utils.PollCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/polls")
@@ -41,21 +42,31 @@ public class PollController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/code/{code}")
+    public ResponseEntity<Poll> getPollByCode(@PathVariable String code) {
+        Optional<Poll> poll = pollService.findByCode(code);
+        if (poll.isPresent()) {
+            return ResponseEntity.ok(poll.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @PostMapping
     public Poll createPoll(@RequestBody Poll poll, @RequestHeader(name = "Authorization") String idToken) {
-        // You can use idToken here to associate the poll with the user
         // Extract the Bearer token
         idToken = idToken.replace("Bearer ", "");
 
         // Decode the ID token to get the Firebase UID
-        String firebaseUID = getUidFromToken(idToken);
+        String firebaseUID = FirebaseFunctions.getUidFromToken(idToken);
+
         // Find the user by Firebase UID
         User user = userService.findByFirebaseUID(firebaseUID)
                 .orElseThrow(() -> new RuntimeException("User not found with Firebase UID: " + firebaseUID));
 
         // Associate the poll with the user
         poll.setUser(user);
+
         // Generate a unique code for the poll
         String uniqueCode = PollCodeGenerator.generateCode();
         poll.setCode(uniqueCode);
@@ -63,14 +74,7 @@ public class PollController {
         return pollService.save(poll);
     }
 
-    public String getUidFromToken(String idToken) {
-        try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            return decodedToken.getUid();
-        } catch (Exception e) {
-            throw new RuntimeException("Error verifying ID token", e);
-        }
-    }
+
 
 
 
@@ -94,14 +98,6 @@ public class PollController {
         }
     }
 
-    @GetMapping("/code/{code}")
-    public ResponseEntity<Poll> getPollByCode(@PathVariable String code) {
-        Optional<Poll> poll = pollService.findByCode(code);
-        if (poll.isPresent()) {
-            return ResponseEntity.ok(poll.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
 }
 
