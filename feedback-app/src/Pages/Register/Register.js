@@ -75,7 +75,7 @@ const Register = () => {
                         />
                     </div>
                     <div className="flex items-center justify-center">
-                        <Button text="Register" onClick={handleSubmit} />
+                        <Button text="Register" type="submit" />
                     </div>
                 </form>
             </div>

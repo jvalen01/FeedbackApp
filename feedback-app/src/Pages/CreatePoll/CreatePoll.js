@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import Firebase from '../../firebaseConfig';
 import './CreatePoll.css';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 const firebaseInstance = new Firebase();
 
 function CreatePoll() {
     const [pollName, setPollName] = useState('')
     const [pollQuestionText, setPollQuestionText] = useState('');
-    const [pollAccessMode, setPollAccessMode] = useState('');
+    const [pollAccessMode, setPollAccessMode] = useState('public');
 
-
-
-
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -72,7 +70,7 @@ function CreatePoll() {
             console.log("creating poll data: ", responseData);
             if (response.ok) {
                 alert('Poll created successfully!');
-                // Navigate to home or another relevant page after successful creation
+                navigate('/home')
             } else {
                 alert('Error creating poll: ' + responseData.message);
             }
@@ -104,18 +102,32 @@ function CreatePoll() {
                     />
                 </div>
                 <div className="input-group">
-                    <label className="label">Access Mode (public/private):</label>
-                    <input
-                        className="input"
-                        value={pollAccessMode}
-                        onChange={(e) => setPollAccessMode(e.target.value)}
-                        required
-                    />
+                    <label className="label">Access Mode:</label>
+                    <div className="radio-group">
+                        <label className="radio-label">
+                            <input
+                                type="radio"
+                                value="public"
+                                checked={pollAccessMode === 'public'}
+                                onChange={() => setPollAccessMode('public')}
+                            />
+                            Public
+                        </label>
+                        <label className="radio-label">
+                            <input
+                                type="radio"
+                                value="private"
+                                checked={pollAccessMode === 'private'}
+                                onChange={() => setPollAccessMode('private')}
+                            />
+                            Private
+                        </label>
+                    </div>
                 </div>
                 {/* Add other input fields for additional poll details */}
                 <button className="submit-button" type="submit">Create</button>
                 <Link to="/home">
-                    <button className="home-button" type="submit">Home</button>
+                    <button className="home-button" type="button">Home</button>
                 </Link>
             </form>
         </div>
