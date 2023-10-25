@@ -1,6 +1,7 @@
 package dat250.feedApp.service;
 
 import dat250.feedApp.model.Poll;
+import dat250.feedApp.model.User;
 import dat250.feedApp.repository.PollRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,10 @@ public class PollService {
 
     public Optional<Poll> findByCode(String code) {
         return pollRepository.findByCode(code);
+    }
+
+    public List<Poll> findByUser(User user) {
+        return pollRepository.findByUser(user);
     }
 }
 

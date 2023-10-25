@@ -47,4 +47,18 @@ public class Poll {
         question.setPoll(this);
     }
 
+    @Override
+    public String toString() {
+        return "Poll{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", active=" + active +
+                ", accessMode='" + accessMode + '\'' +
+                ", question='" + question + '\'' +
+                ", code='" + code + '\'' +
+                ", questions=" + questions +
+                ", ioTDevices=" + ioTDevices +
+                ", user=" + user +
+                '}';
+    }
 }

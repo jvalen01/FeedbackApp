@@ -10,7 +10,9 @@ import dat250.feedApp.service.UserService;
 import dat250.feedApp.utils.FirebaseFunctions;
 import dat250.feedApp.utils.PollCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -51,6 +53,22 @@ public class PollController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<Poll>> getPollsByUser(@RequestHeader(name = "Authorization") String idToken) {
+        idToken = idToken.replace("Bearer ", "");
+        String firebaseUID = FirebaseFunctions.getUidFromToken(idToken);
+        User user = userService.findByFirebaseUID(firebaseUID)
+                .orElseThrow(() -> new RuntimeException("User not found with Firebase UID: " + firebaseUID));
+        List<Poll> polls = pollService.findByUser(user);
+        System.out.println(polls);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return new ResponseEntity<>(polls, headers, HttpStatus.OK);
+    }
+
 
     @PostMapping
     public Poll createPoll(@RequestBody Poll poll, @RequestHeader(name = "Authorization") String idToken) {

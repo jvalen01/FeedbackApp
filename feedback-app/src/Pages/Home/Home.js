@@ -1,29 +1,58 @@
-import React, { useState, useEffect }  from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../../Components/Button';
-import { Link, useNavigate } from 'react-router-dom'; // Import Link and useHistory
+import { Link, useNavigate } from 'react-router-dom';
 import Firebase from '../../firebaseConfig';
 import '../../styles/components.css';
 import './Home.css'
-import 'font-awesome/css/font-awesome.min.css';
-
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPoll } from '@fortawesome/free-solid-svg-icons';
 
 const firebaseInstance = new Firebase();
 
 function Home() {
     const navigate = useNavigate();
 
-    // State to store user's email
     const [userEmail, setUserEmail] = useState('');
     const [pollCode, setPollCode] = useState('');
+    const [polls, setPolls] = useState([]); // To store the fetched polls
 
-
-    // Fetch user email on component mount
     useEffect(() => {
         if (firebaseInstance.auth.currentUser) {
             setUserEmail(firebaseInstance.auth.currentUser.email);
         }
-    }, []); // The empty dependency array ensures this runs only once when the component mounts
+    }, []);
+
+    // Fetch polls specific to the user on component mount
+    useEffect(() => {
+        const fetchPollsByUser = async () => {
+            const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
+            try {
+                const response = await fetch(`http://localhost:8080/api/polls/user`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${idToken}`
+                    }
+                });
+                const data = await response.json();
+                console.log('Raw API response:', data); // Logs raw data from the API
+
+                if (response.ok) {
+                    setPolls(data);
+                    console.log('Polls state after setting:', polls); // Logs state after setting it
+
+                } else {
+                    console.error('Error fetching polls by user:', data);
+                }
+            } catch (error) {
+                console.error('Error fetching polls by user:', error);
+            }
+        };
+
+        fetchPollsByUser();
+    }, []);
+
+
+
 
 
     const fetchPollByCode = async () => {
@@ -32,12 +61,12 @@ function Home() {
             const response = await fetch(`http://localhost:8080/api/polls/code/${pollCode}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${idToken}`
+                    'Authorization': `Bearer ${idToken}`,
+                    'Cache-Control': 'no-cache' // To avoid caching of the API response
                 }
             });
             const data = await response.json();
             if (response.ok) {
-                // Redirect to poll participation page, maybe using `useNavigate`
                 navigate(`/poll/${pollCode}`);
             } else {
                 alert('Invalid poll code!');
@@ -46,7 +75,6 @@ function Home() {
             console.error('Error fetching poll:', error);
         }
     };
-
 
     const handleLogout = async () => {
         try {
@@ -64,13 +92,24 @@ function Home() {
                 <h1 className="mb-10 text-4xl font-bold text-gray-800">FeedbackApp Dashboard</h1>
 
                 <div className="pollSection w-full mb-6">
-                    <h2 className="text-2xl font-bold mb-4">Active Polls</h2>
-                    {/* Here you can map through your polls and display them */}
-                    <p className="text-xl text-gray-600">No active polls available.</p>
-                    <Link to="/createPoll">
-                        <Button text="Create New Poll" />
-                    </Link>
+                    <h2 className="text-2xl font-bold mb-4">My Polls</h2>
+                    {polls.length === 0 ? (
+                        <p className="text-xl text-gray-600">No active polls available.</p>
+                    ) : (
+                        polls.map(poll => (
+                            <div key={poll.id}>
+                                <h3>{poll.name}</h3>
+                                <Link to="/pollPage">
+                                    <button>Manage Poll</button>
+                                </Link>
+                                {/* Add more details about each poll as needed */}
+                            </div>
+                        ))
+                    )}
                 </div>
+                <Link to="/createPoll">
+                    <Button text="Create New Poll" />
+                </Link>
 
                 <div className="activitySection w-full mb-6 p-4 bg-gray-100 rounded-md shadow-md">
                     <h2 className="text-3xl font-bold mb-6 text-gray-700">Participate in a poll</h2>
@@ -83,10 +122,9 @@ function Home() {
                             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent"
                         />
                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <i className="fas fa-poll text-gray-400"></i> {/* This adds a poll icon inside the input if you use Font Awesome */}
+                            <FontAwesomeIcon icon={faPoll} className="text-gray-400" />
                         </div>
                     </div>
-
                     <Button
                         text="Participate in Poll"
                         onClick={fetchPollByCode}
@@ -96,8 +134,7 @@ function Home() {
 
                 <div className="userSection w-full flex justify-between items-center">
                     <div>
-                        <h3 className="text-xl font-medium mb-2">{userEmail}</h3> {/* Display user's email */}
-
+                        <h3 className="text-xl font-medium mb-2">{userEmail}</h3>
                     </div>
                     <Button text="Logout" onClick={handleLogout} />
                 </div>
@@ -107,3 +144,4 @@ function Home() {
 }
 
 export default Home;
+
