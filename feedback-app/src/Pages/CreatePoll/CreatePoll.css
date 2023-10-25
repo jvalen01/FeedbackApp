@@ -63,3 +63,21 @@
 .home-button:hover {
     background-color: #0056b3;
 }
+
+.radio-label {
+    margin-right: 15px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.radio-label:hover {
+    background-color: #f1f1f1;
+}
+
+
+.radio-label input[type="radio"] {
+    /* A little space between the radio and the label text */
+    margin: 0 5px 0 0;
+}
