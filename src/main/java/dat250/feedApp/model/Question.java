@@ -29,7 +29,7 @@ public class Question {
 
     private int totalVotes;
 
-    @ManyToOne
+    @OneToOne
     private Poll poll;
 
     @OneToMany(mappedBy = "question")

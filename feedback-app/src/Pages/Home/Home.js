@@ -6,6 +6,8 @@ import '../../styles/components.css';
 import './Home.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPoll } from '@fortawesome/free-solid-svg-icons';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
+
 
 const firebaseInstance = new Firebase();
 
@@ -97,15 +99,22 @@ function Home() {
                         <p className="text-xl text-gray-600">No active polls available.</p>
                     ) : (
                         polls.map(poll => (
-                            <div key={poll.id}>
-                                <h3>{poll.name}</h3>
-                                <Link to="/pollPage">
-                                    <button>Manage Poll</button>
-                                </Link>
-                                {/* Add more details about each poll as needed */}
+                            <div key={poll.id} className="flex items-center">
+                                <div>
+                                    <h3>{poll.name}</h3>
+                                    {/* Add more details about each poll as needed */}
+                                </div>
+                                <div id={"managePoll"} className="ml-auto"> {/* Use ml-auto to push button to the right */}
+                                    <Link to={`/pollPage/${poll.id}`}> {/* Pass the poll ID as a URL parameter */}
+                                        <button className=" focus:outline-none focus:ring-2 focus:border-transparent">
+                                            <FontAwesomeIcon icon={faGear} className="text-gray-400" />                                        </button>
+                                    </Link>
+                                </div>
                             </div>
                         ))
                     )}
+
+
                 </div>
                 <Link to="/createPoll">
                     <Button text="Create New Poll" />

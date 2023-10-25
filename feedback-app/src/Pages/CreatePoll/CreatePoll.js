@@ -7,8 +7,11 @@ const firebaseInstance = new Firebase();
 
 function CreatePoll() {
     const [pollName, setPollName] = useState('')
-    const [pollQuestion, setPollQuestion] = useState('');
+    const [pollQuestionText, setPollQuestionText] = useState('');
     const [pollAccessMode, setPollAccessMode] = useState('');
+
+
+
 
 
     const handleSubmit = async (e) => {
@@ -16,6 +19,35 @@ function CreatePoll() {
 
         // Get user's ID token
         const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
+
+        // Create the question object
+        const questionObject = {
+            question: pollQuestionText, // Use the question text input
+            yesVotes: 0,
+            noVotes: 0,
+            totalVotes: 0,
+        };
+
+        // Send a POST request to create the question
+        const questionResponse = await fetch('http://localhost:8080/api/questions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            },
+            body: JSON.stringify(questionObject)
+        });
+
+        const questionData = await questionResponse.json();
+        if (!questionResponse.ok) {
+            console.error('Error creating question:', questionData.message);
+            return;
+        }
+
+        // Now, you have the ID of the newly created question
+        const questionId = questionData.id;
+
+
 
         // Send POST request to Spring Boot backend with poll details
         try {
@@ -29,13 +61,15 @@ function CreatePoll() {
                     name: pollName,
                     active: true,
                     accessMode: pollAccessMode,
-                    question: pollQuestion
+                    question: { id: questionId } // Pass the question ID
+
 
                     // ... add other poll details
                 })
             });
 
             const responseData = await response.json();
+            console.log("creating poll data: ", responseData);
             if (response.ok) {
                 alert('Poll created successfully!');
                 // Navigate to home or another relevant page after successful creation
@@ -64,8 +98,8 @@ function CreatePoll() {
                     <label className="label">Poll Question:</label>
                     <input
                         className="input"
-                        value={pollQuestion}
-                        onChange={(e) => setPollQuestion(e.target.value)}
+                        value={pollQuestionText}
+                        onChange={(e) => setPollQuestionText(e.target.value)}
                         required
                     />
                 </div>

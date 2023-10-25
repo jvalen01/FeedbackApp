@@ -28,24 +28,16 @@ public class Poll {
 
     private String accessMode;
 
-    private String question;
-
     private String code;
 
-
-    @OneToMany(mappedBy = "poll")
-    private List<Question> questions = new ArrayList<>();
+    @OneToOne
+    private Question question;
 
     @OneToMany(mappedBy = "poll")
     private List<IoTDevice> ioTDevices = new ArrayList<>();
 
     @ManyToOne
     private User user;
-
-    public void addQuestion(Question question) {
-        this.questions.add(question);
-        question.setPoll(this);
-    }
 
     @Override
     public String toString() {
@@ -56,7 +48,6 @@ public class Poll {
                 ", accessMode='" + accessMode + '\'' +
                 ", question='" + question + '\'' +
                 ", code='" + code + '\'' +
-                ", questions=" + questions +
                 ", ioTDevices=" + ioTDevices +
                 ", user=" + user +
                 '}';
