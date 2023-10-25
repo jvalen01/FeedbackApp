@@ -8,6 +8,8 @@ import PrivateRoute from "./Components/PrivateRoute";
 import CreatePoll from "./Pages/CreatePoll/CreatePoll";
 import PollDisplay from "./Pages/PollDisplay/PollDisplay";
 
+
+
 function App() {
     return (
         <Router>

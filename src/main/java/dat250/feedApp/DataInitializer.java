@@ -1,4 +1,4 @@
-package dat250.feedApp;
+/*package dat250.feedApp;
 
 
 import dat250.feedApp.model.Poll;
@@ -78,5 +78,5 @@ public class DataInitializer {
     }
 
 }
-
+*/
 

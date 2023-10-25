@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'; // Import Link and useHist
 import Firebase from '../../firebaseConfig';
 import '../../styles/components.css';
 import './Home.css'
+import 'font-awesome/css/font-awesome.min.css';
 
 
 
@@ -71,23 +72,32 @@ function Home() {
                     </Link>
                 </div>
 
-                <div className="activitySection w-full mb-6">
-                    <h2 className="text-2xl font-bold mb-4">Participate in a poll</h2>
-                    <input
-                        type="text"
-                        value={pollCode}
-                        onChange={e => setPollCode(e.target.value)}
-                        placeholder="Enter poll code"
+                <div className="activitySection w-full mb-6 p-4 bg-gray-100 rounded-md shadow-md">
+                    <h2 className="text-3xl font-bold mb-6 text-gray-700">Participate in a poll</h2>
+                    <div className="relative mb-4">
+                        <input
+                            type="text"
+                            value={pollCode}
+                            onChange={e => setPollCode(e.target.value)}
+                            placeholder="Enter poll code"
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent"
+                        />
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <i className="fas fa-poll text-gray-400"></i> {/* This adds a poll icon inside the input if you use Font Awesome */}
+                        </div>
+                    </div>
+
+                    <Button
+                        text="Participate in Poll"
+                        onClick={fetchPollByCode}
+                        className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent"
                     />
-                    <Button text="Participate in Poll" onClick={fetchPollByCode} />
                 </div>
 
                 <div className="userSection w-full flex justify-between items-center">
                     <div>
                         <h3 className="text-xl font-medium mb-2">{userEmail}</h3> {/* Display user's email */}
-                        <Link to="/profile">
-                            <Button text="Profile & Settings" />
-                        </Link>
+
                     </div>
                     <Button text="Logout" onClick={handleLogout} />
                 </div>
