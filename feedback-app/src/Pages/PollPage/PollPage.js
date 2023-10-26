@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function PollPage() {
     const [pollData, setPollData] = useState(null);
@@ -19,7 +19,6 @@ function PollPage() {
                     const data = await response.json();
                     setPollData(data);
                 } else {
-                    // Handle error when the response is not OK
                     console.error('Failed to fetch poll data');
                 }
             } catch (error) {
@@ -30,19 +29,71 @@ function PollPage() {
         fetchPollData();
     }, [pollID]);
 
+    const calculateHeight = (votes) => {
+        if (votes === 0) return '5px';
+        const baseHeight = 50; // Starting height for 1 vote
+        return `${baseHeight * Math.log(votes + 1)}px`; // Adding 1 to avoid log(1) = 0
+    };
+
+
     if (!pollData) {
-        return <div>Loading...</div>;
+        return <div className="text-center text-xl mt-8">Loading...</div>;
     }
 
-    // Render poll data
+    const yesVotesHeight = calculateHeight(pollData.question.yesVotes);
+    const noVotesHeight = calculateHeight(pollData.question.noVotes);
+
+    // Render poll data with Tailwind styling
     return (
-        <div>
-            <h2>Poll name: {pollData.name}</h2>
-            <h2>Created By: {pollData.user.username}</h2>
-            <h2>Yes votes: {pollData.question.yesVotes}</h2>
-            <h2>No votes: {pollData.question.noVotes}</h2>
-            <h2>Total votes: {pollData.question.totalVotes}</h2>
-            {/* Render other poll details here */}
+        <div className="w-4/5 max-w-6xl min-h-screen mx-auto p-8 bg-gray-100 shadow-md rounded-lg">
+            <div className="flex items-center mb-6">
+                <h2 className="text-xl font-bold mr-2">Poll name:</h2> {/* Bold and text size adjusted */}
+                <span className="text-xl">{pollData.name}</span> {/* Text size adjusted */}
+            </div>
+
+            <div className="border-b border-gray-300 mb-6"></div>
+
+            <div className="flex items-center mb-6">
+                <h3 className="text-xl font-semibold mr-2">Question:</h3>
+                <span className="text-xl">{pollData.question.question}</span> {/* Text size adjusted */}
+            </div>
+
+            <div className="flex items-center mb-6">
+                <h3 className="text-xl font-semibold mr-2">Join Code:</h3>
+                <span className="text-xl">{pollData.code}</span> {/* Text size adjusted */}
+            </div>
+
+            <div className="flex items-end mb-10">
+                <div>
+                    <div style={{ height: yesVotesHeight }} className="bg-green-500 w-16 rounded-lg shadow-sm"></div>
+                    <div className="flex items-center mt-2">
+                        <h4 className="text-xl font-semibold mr-2">Yes votes:</h4> {/* Text size adjusted */}
+                        <span className="text-xl">{pollData.question.yesVotes}</span> {/* Text size adjusted */}
+                    </div>
+                </div>
+
+                <div className="ml-8">
+                    <div style={{ height: noVotesHeight }} className="bg-red-500 w-16 rounded-lg shadow-sm"></div>
+                    <div className="flex items-center mt-2">
+                        <h4 className="text-xl font-semibold mr-2">No votes:</h4> {/* Text size adjusted */}
+                        <span className="text-xl">{pollData.question.noVotes}</span> {/* Text size adjusted */}
+                    </div>
+                </div>
+            </div>
+
+            <div className="border-b border-gray-300 mb-6"></div>
+
+            <div className="flex items-center mb-10">
+                <h3 className="text-xl font-semibold mr-2">Total votes:</h3>
+                <span className="text-xl">{pollData.question.totalVotes}</span> {/* Text size adjusted */}
+            </div>
+
+            <div className="border-b border-gray-300 mb-6"></div>
+
+            <div className="flex items-center mb-4">
+                <h3 className="text-xl font-semibold mr-2">Created By:</h3>
+                <span className="text-xl">{pollData.user.username}</span> {/* Text size adjusted */}
+            </div>
         </div>
     );
 }
