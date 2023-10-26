@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+
 import Button from '../../Components/Button';
-import { Link, useNavigate } from 'react-router-dom';
-import Firebase from '../../firebaseConfig';
 import '../../styles/components.css';
 import './Home.css'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import Firebase from '../../firebaseConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faEye, faPoll} from '@fortawesome/free-solid-svg-icons';
+import { faEye, faPoll } from '@fortawesome/free-solid-svg-icons';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios";
 
@@ -174,7 +175,7 @@ function Home() {
                         </Link>
                         <button
                             onClick={() => deactivatePoll(poll.id)}
-                            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
                         >
                             End Poll
                         </button>
@@ -190,7 +191,7 @@ function Home() {
     const renderInactivePolls = (pollsList) => {
         return pollsList.map((poll, index) => (
             <div key={poll.id} className="mb-4">
-                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-md shadow-sm">
+                <div className="flex items-center  justify-between bg-gray-100 p-4 rounded-md shadow-sm">
                     <div>
                         <h3 className="text-lg font-semibold">{poll.name}</h3>
                     </div>
@@ -202,7 +203,7 @@ function Home() {
                         </Link>
                         <button
                             onClick={() => activatePoll(poll.id)} // Assuming you will define an activatePoll function
-                            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"
+                            className="bg-green-500 text-white px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 rounded-lg"
                         >
                             Start Poll
                         </button>
@@ -217,27 +218,30 @@ function Home() {
 
 
     return (
-        <div className="home-background min-h-screen flex flex-col items-center justify-center bg-gray-200">
-            <div className="homeContainer md:w-2/3 lg:w-1/2 xl:w-1/3 bg-white p-4 md:p-6 lg:p-8 rounded-xl shadow-lg flex flex-col justify-between ">
-                <h1 className="mb-10 text-4xl font-bold text-gray-800">FeedbackApp Dashboard</h1>
+        <div className="gradient-background home-background min-h-screen flex flex-col items-center justify-center bg-gray-200 p-4 md:p-8">
+            <div className=" homeContainer max-w-5xl w-full bg-white p-6 rounded-xl shadow-lg flex flex-col justify-between elevated-card">
 
-                <div className="flex w-full mb-6 justify-between">
-                    <div className="pollSection w-1/2 pr-2">
+                <div className="text-center mb-10 header-style"> {/* Added text-center class */}
+                    <div className="mb-0 text-right">
+                        <Link to="/createPoll">
+                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                                Create New Poll
+                            </button>
+                        </Link>
+                    </div>
+                    <h1 className="text-4xl font-bold text-gray-800 dashboard-title">FeedbackApp Dashboard</h1>
+                </div>
+
+                <div className="flex w-full mb-6 flex-col md:flex-row justify-between">
+                    <div className="pollSection  w-full md:w-1/2 pr-2 mb-4 md:mb-0">
                         <h2 className="text-2xl font-bold mb-4">My Active Polls</h2>
                         {renderActivePolls(activePolls)}
                     </div>
 
-                    <div className="pollSection w-1/2 pl-2">
+                    <div className="pollSection w-full md:w-1/2 pl-2">
                         <h2 className="text-2xl font-bold mb-4">My Inactive Polls</h2>
                         {renderInactivePolls(inactivePolls)}
                     </div>
-                </div>
-
-
-                <div className="mb-10"> {/* Add the desired margin to this div */}
-                    <Link to="/createPoll">
-                        <Button text="Create New Poll" />
-                    </Link>
                 </div>
 
                 <div className="activitySection w-full mb-6 p-4 bg-gray-100 rounded-md shadow-md">
@@ -254,18 +258,20 @@ function Home() {
                             <FontAwesomeIcon icon={faPoll} className="text-gray-400" />
                         </div>
                     </div>
-                    <Button
-                        text="Participate in Poll"
+                    <button
                         onClick={fetchPollByCode}
-                        className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent"
-                    />
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                        Participate in Poll
+                    </button>
                 </div>
 
                 <div className="userSection w-full flex justify-between items-center">
                     <div>
                         <h3 className="text-xl font-medium mb-2">{userEmail}</h3>
                     </div>
-                    <Button text="Logout" onClick={handleLogout} />
+                    <button onClick={handleLogout} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">
+                        Logout
+                    </button>
                 </div>
             </div>
         </div>

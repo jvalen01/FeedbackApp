@@ -1,15 +1,30 @@
+
 .homeContainer {
-    /* Increase width for larger screens */
-    width: 80%; /* Adjust as needed */
+    /* Adjust as needed */
     max-width: 1400px; /* Prevent it from becoming too wide on very large screens */
-
-    /* Increase height */
     min-height: 85vh; /* Adjust as needed */
-
-    /* ...rest of your styles remain the same */
 }
 
 #managePoll {
     margin-bottom: 0.5%;
     margin-left: 1rem;
 }
+
+.gradient-background {
+    background: linear-gradient(to bottom, #e0f7ff, #ffffff);
+}
+
+.elevated-card {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1); /* Adjust as needed */
+}
+.header-style {
+    border-bottom: 4px solid #4A5568; /* A slightly lighter shade for the border */
+    padding: 1rem 0; /* Padding for spacing */
+}
+
+.dashboard-title {
+    font-size: 3rem; /* Increase font size */
+    color: black; /* A teal-like color */
+    font-weight: 500; /* Bold font weight */
+}
+

@@ -7,7 +7,7 @@ import Home from './Pages/Home/Home';
 import PrivateRoute from "./Components/PrivateRoute";
 import CreatePoll from "./Pages/CreatePoll/CreatePoll";
 import PollDisplay from "./Pages/PollDisplay/PollDisplay";
-import PollPage from "./Pages/PollPage/PollPage";
+import PollData from "./Pages/PollData/PollData";
 
 
 
@@ -21,8 +21,7 @@ function App() {
                 <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
                 <Route path="/createPoll" element={<PrivateRoute><CreatePoll /></PrivateRoute>} />
                 <Route path="/poll/:code" element={<PrivateRoute><PollDisplay /></PrivateRoute>} />
-                <Route path="/pollPage/:pollID" element={<PrivateRoute><PollPage /></PrivateRoute>} />
-
+                <Route path="/pollPage/:pollID" element={<PrivateRoute><PollData /></PrivateRoute>} />
             </Routes>
         </Router>
     );

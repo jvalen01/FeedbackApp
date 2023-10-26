@@ -21,4 +21,10 @@ public class Voter {
 
     @OneToMany
     private List<Vote> votes = new ArrayList<>();
+
+    // Add vote to user's list
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
+        vote.setVoter(this);
+    }
 }

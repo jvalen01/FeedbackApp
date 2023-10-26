@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {Link, useNavigate, useParams} from "react-router-dom";
 
-function PollPage() {
+function PollData() {
     const [pollData, setPollData] = useState(null);
     const { pollID } = useParams();
 
@@ -107,4 +107,4 @@ function PollPage() {
     );
 }
 
-export default PollPage;
+export default PollData;
