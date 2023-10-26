@@ -35,8 +35,8 @@ public class VoteController {
 
     // POST (create) a vote
     @PostMapping
-    public Vote createVote(@RequestBody Vote vote) {
-        return voteService.saveVote(vote);
+    public ResponseEntity<Vote> createVote(@RequestBody Vote vote) {
+        return ResponseEntity.ok(voteService.saveVote(vote));
     }
 
     // PUT (update) a vote

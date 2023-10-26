@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 function PollPage() {
     const [pollData, setPollData] = useState(null);
     const { pollID } = useParams();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPollData = async () => {
@@ -39,6 +41,8 @@ function PollPage() {
     if (!pollData) {
         return <div className="text-center text-xl mt-8">Loading...</div>;
     }
+    console.log("Poll data: ", pollData);
+
 
     const yesVotesHeight = calculateHeight(pollData.question.yesVotes);
     const noVotesHeight = calculateHeight(pollData.question.noVotes);

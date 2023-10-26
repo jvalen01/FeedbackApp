@@ -40,12 +40,19 @@ public class VoteService {
 
     public Vote saveVote(Vote vote) {
         // Fetch the User entity from the database using firebaseUID
-        String firebaseUID = vote.getUser().getFirebaseUID();
-        User existingUser = userRepository.findByFirebaseUID(firebaseUID)
-                .orElseThrow(() -> new RuntimeException("User not found with firebaseUID: " + firebaseUID));
+        String username = vote.getUser().getUsername();
+        logger.info("FirebaseUID: " + username);
+        User existingUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with firebaseUID: " + username));
 
         // Associate the user with the vote
         vote.setUser(existingUser);
+        logger.info("Before adding vote: " + existingUser + ", Votes: " + existingUser.getVotes().size());
+        existingUser.addVote(vote);
+        logger.info("After adding vote: " + existingUser + ", Votes: " + existingUser.getVotes().size());
+        userRepository.save(existingUser);
+
+
 
         // Fetch the current state of the Question entity from the database
         Question existingQuestion = questionRepository.findById(vote.getQuestion().getId())
@@ -62,6 +69,7 @@ public class VoteService {
 
         // Now save the updated question
         questionRepository.save(existingQuestion);
+
 
         // Now save the vote
         return voteRepository.save(vote);

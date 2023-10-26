@@ -20,8 +20,8 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
                 <Route path="/createPoll" element={<PrivateRoute><CreatePoll /></PrivateRoute>} />
-                <Route path="/poll/:code" element={<PollDisplay />} />
-                <Route path="/pollPage/:pollID" element={<PollPage />} />
+                <Route path="/poll/:code" element={<PrivateRoute><PollDisplay /></PrivateRoute>} />
+                <Route path="/pollPage/:pollID" element={<PrivateRoute><PollPage /></PrivateRoute>} />
 
             </Routes>
         </Router>

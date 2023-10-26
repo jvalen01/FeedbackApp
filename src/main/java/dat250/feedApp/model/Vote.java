@@ -1,5 +1,6 @@
 package dat250.feedApp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -27,6 +28,7 @@ public class Vote {
     private IoTDevice ioTDevice;
 
     @ManyToOne
+    @JsonBackReference
     private User user;
 
     @ManyToOne

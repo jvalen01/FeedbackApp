@@ -22,7 +22,6 @@ function Login() {
             } else {
                 throw new Error('No user is currently signed in.');
             }
-            alert('Logged in successfully!');
             navigate('/home');
         } catch (error) {
             alert('Error logging in: ' + error.message);

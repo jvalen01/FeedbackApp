@@ -1,6 +1,7 @@
 package dat250.feedApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -32,10 +33,11 @@ public class User {
     private Boolean adminRights;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<Vote> votes = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Poll> polls = new ArrayList<>();
 
     @Override

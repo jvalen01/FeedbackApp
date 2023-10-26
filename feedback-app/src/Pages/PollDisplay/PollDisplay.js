@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
+import Firebase from "../../firebaseConfig";
+
+
 
 function PollDisplay(props) {
     const { code } = useParams();
     const [pollData, setPollData] = useState(null);
     const [answer, setAnswer] = useState(''); // state to hold the answer input value
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         axios.get(`http://localhost:8080/api/polls/code/${code}`)
@@ -21,6 +26,7 @@ function PollDisplay(props) {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Submitted Answer:", answer);
+        console.log("ggg: ", pollData);
 
         const vote = {
             answer: answer === 'Yes',
@@ -29,7 +35,7 @@ function PollDisplay(props) {
                 question: pollData.question.question
             },
             user: {
-                firebaseUID: pollData.user.firebaseUID
+                username: pollData.user.username
             }
             // ... add other necessary properties such as user, etc.
         };
@@ -39,6 +45,7 @@ function PollDisplay(props) {
         axios.post('http://localhost:8080/api/votes', vote)
             .then(response => {
                 console.log('Vote submitted successfully!', response.data);
+                navigate('/home')
                 // You may want to fetch the updated pollData again or redirect the user, etc.
             })
             .catch(error => {

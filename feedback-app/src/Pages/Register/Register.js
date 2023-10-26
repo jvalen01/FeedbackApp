@@ -36,7 +36,6 @@ const Register = () => {
             });
             const data = await response.json();
             if (data.success) {
-                alert("Successfully registered in backend!");
                 navigate('/login');  // <-- This line redirects to another page
             } else {
                 throw new Error(data.message);

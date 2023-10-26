@@ -47,7 +47,6 @@ function CreatePoll() {
             const responseData = await response.json();
             console.log("creating poll data: ", responseData);
             if (response.ok) {
-                alert('Poll created successfully!');
                 navigate('/home')
             } else {
                 alert('Error creating poll: ' + responseData.message);
