@@ -11,9 +11,6 @@ function CreatePoll() {
     const [pollAccessMode, setPollAccessMode] = useState('');
 
 
-
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -27,28 +24,6 @@ function CreatePoll() {
             noVotes: 0,
             totalVotes: 0,
         };
-
-        // Send a POST request to create the question
-        const questionResponse = await fetch('http://localhost:8080/api/questions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${idToken}`
-            },
-            body: JSON.stringify(questionObject)
-        });
-
-        const questionData = await questionResponse.json();
-        if (!questionResponse.ok) {
-            console.error('Error creating question:', questionData.message);
-            return;
-        }
-
-        // Now, you have the ID of the newly created question
-        const questionId = questionData.id;
-
-
-
         // Send POST request to Spring Boot backend with poll details
         try {
             const response = await fetch('http://localhost:8080/api/polls', {
@@ -61,7 +36,7 @@ function CreatePoll() {
                     name: pollName,
                     active: true,
                     accessMode: pollAccessMode,
-                    question: { id: questionId } // Pass the question ID
+                    question: questionObject // Pass the question ID
 
 
                     // ... add other poll details
@@ -105,12 +80,16 @@ function CreatePoll() {
                 </div>
                 <div className="input-group">
                     <label className="label">Access Mode (public/private):</label>
-                    <input
+                    <select
                         className="input"
                         value={pollAccessMode}
                         onChange={(e) => setPollAccessMode(e.target.value)}
                         required
-                    />
+                    >
+                        <option value="">Select Access Mode</option>
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                    </select>
                 </div>
                 {/* Add other input fields for additional poll details */}
                 <button className="submit-button" type="submit">Create</button>

@@ -29,10 +29,11 @@ public class Question {
 
     private int totalVotes;
 
-    @OneToOne
+    @OneToOne(mappedBy = "question", cascade = CascadeType.ALL)
+    @JoinColumn(name = "poll_id") // this is the foreign key column in the Question table
     private Poll poll;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Vote> votes = new ArrayList<>();
 
     @Override

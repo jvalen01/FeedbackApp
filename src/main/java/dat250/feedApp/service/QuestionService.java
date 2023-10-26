@@ -1,6 +1,7 @@
 package dat250.feedApp.service;
 
 import dat250.feedApp.model.Question;
+import dat250.feedApp.model.User;
 import dat250.feedApp.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,4 +34,6 @@ public class QuestionService {
     public void deleteById(Long id) {
         questionRepository.deleteById(id);
     }
+
+
 }

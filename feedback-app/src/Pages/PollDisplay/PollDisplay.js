@@ -21,7 +21,29 @@ function PollDisplay(props) {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Submitted Answer:", answer);
-        // You can handle the answer submission logic here
+
+        const vote = {
+            answer: answer === 'Yes',
+            question: {
+                id: pollData.question.id,
+                question: pollData.question.question
+            },
+            user: {
+                firebaseUID: pollData.user.firebaseUID
+            }
+            // ... add other necessary properties such as user, etc.
+        };
+        console.log('Sending vote to backend:', vote);
+
+
+        axios.post('http://localhost:8080/api/votes', vote)
+            .then(response => {
+                console.log('Vote submitted successfully!', response.data);
+                // You may want to fetch the updated pollData again or redirect the user, etc.
+            })
+            .catch(error => {
+                console.error("Error submitting vote:", error);
+            });
     };
 
     if (!pollData) {
@@ -31,15 +53,22 @@ function PollDisplay(props) {
     return (
         <div className="bg-gray-100 p-8 rounded-md shadow-lg max-w-lg mx-auto mt-10">
             <h1 className="text-2xl font-bold mb-4">{pollData.name}</h1>
-            <h2 className="text-xl mb-6">{pollData.question}</h2>
+            <h2 className="text-xl mb-6">{pollData.question.question}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                    type="text"
-                    placeholder="Your answer..."
-                    className="w-full p-4 rounded-md border focus:outline-none focus:ring focus:border-blue-300"
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                />
+                <div className="space-x-4">
+                    <button
+                        type="button"
+                        className={`text-white p-4 rounded-md ${answer === 'Yes' ? 'bg-green-600' : 'bg-gray-300 hover:bg-gray-400'}`}
+                        onClick={() => setAnswer("Yes")}>
+                        Yes
+                    </button>
+                    <button
+                        type="button"
+                        className={`text-white p-4 rounded-md ${answer === 'No' ? 'bg-red-600' : 'bg-gray-300 hover:bg-gray-400'}`}
+                        onClick={() => setAnswer("No")}>
+                        No
+                    </button>
+                </div>
                 <button type="submit" className="bg-blue-500 text-white p-4 w-full rounded-md hover:bg-blue-600">
                     Submit Answer
                 </button>
@@ -49,7 +78,3 @@ function PollDisplay(props) {
 }
 
 export default PollDisplay;
-
-
-
-
