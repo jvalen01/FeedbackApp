@@ -30,7 +30,8 @@ public class Poll {
 
     private String code;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id") // This specifies the column for the foreign key
     private Question question;
 
     @OneToMany(mappedBy = "poll")

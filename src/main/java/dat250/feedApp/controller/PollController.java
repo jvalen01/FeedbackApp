@@ -4,8 +4,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import dat250.feedApp.model.Poll;
+import dat250.feedApp.model.Question;
 import dat250.feedApp.model.User;
 import dat250.feedApp.service.PollService;
+import dat250.feedApp.service.QuestionService;
 import dat250.feedApp.service.UserService;
 import dat250.feedApp.utils.FirebaseFunctions;
 import dat250.feedApp.utils.PollCodeGenerator;
@@ -29,6 +31,10 @@ public class PollController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private QuestionService questionService;
+
 
     @GetMapping
     public List<Poll> getAllPolls() {
