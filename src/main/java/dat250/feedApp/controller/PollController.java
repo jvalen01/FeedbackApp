@@ -93,9 +93,6 @@ public class PollController {
     }
 
 
-
-
-
     @PutMapping("/{id}")
     public ResponseEntity<Poll> updatePoll(@PathVariable Long id, @RequestBody Poll updatedPoll) {
         if (pollService.existsById(id)) {
@@ -116,6 +113,14 @@ public class PollController {
         }
     }
 
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<Poll> deactivatePoll(@PathVariable Long id) {
+        if (pollService.existsById(id)) {
+            return ResponseEntity.ok(pollService.setPollActiveState(id, false));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }
 

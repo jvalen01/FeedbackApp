@@ -42,5 +42,12 @@ public class PollService {
     public List<Poll> findByUser(User user) {
         return pollRepository.findByUser(user);
     }
+
+    public Poll setPollActiveState(Long id, Boolean state) {
+        Poll poll = pollRepository.findById(id).orElseThrow(() -> new RuntimeException("Poll not found with ID: " + id));
+        poll.setActive(state);
+        return pollRepository.save(poll);
+    }
+
 }
 

@@ -5,8 +5,9 @@ import Firebase from '../../firebaseConfig';
 import '../../styles/components.css';
 import './Home.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPoll } from '@fortawesome/free-solid-svg-icons';
+import {faEye, faPoll} from '@fortawesome/free-solid-svg-icons';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
+import axios from "axios";
 
 
 const firebaseInstance = new Firebase();
@@ -16,7 +17,9 @@ function Home() {
 
     const [userEmail, setUserEmail] = useState('');
     const [pollCode, setPollCode] = useState('');
-    const [polls, setPolls] = useState([]); // To store the fetched polls
+    const [polls, setPolls] = useState([]);
+    const [activePolls, setActivePolls] = useState([]);
+    const [inactivePolls, setInactivePolls] = useState([]);
 
     useEffect(() => {
         if (firebaseInstance.auth.currentUser) {
@@ -25,6 +28,7 @@ function Home() {
     }, []);
 
     // Fetch polls specific to the user on component mount
+// Fetch polls specific to the user on component mount
     useEffect(() => {
         const fetchPollsByUser = async () => {
             const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
@@ -39,8 +43,12 @@ function Home() {
                 console.log('Raw API response:', data); // Logs raw data from the API
 
                 if (response.ok) {
-                    setPolls(data);
-                    console.log('Polls state after setting:', polls); // Logs state after setting it
+                    const activePolls = data.filter(poll => poll.active);
+                    const inactivePolls = data.filter(poll => !poll.active); // Filter only inactive polls
+                    setActivePolls(activePolls);
+                    setInactivePolls(inactivePolls);
+                    console.log('Active polls state after setting:', activePolls);
+                    console.log('Inactive polls state after setting:', inactivePolls);
 
                 } else {
                     console.error('Error fetching polls by user:', data);
@@ -52,10 +60,6 @@ function Home() {
 
         fetchPollsByUser();
     }, []);
-
-
-
-
 
     const fetchPollByCode = async () => {
         const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
@@ -88,34 +92,111 @@ function Home() {
         }
     };
 
+    const deactivatePoll = async (pollId) => {
+        const deactivatedPoll = activePolls.find(poll => poll.id === pollId);
+        if (!deactivatedPoll) return; // Return early if the poll isn't found
+
+        // Update local states first
+        const updatedActivePolls = activePolls.filter(poll => poll.id !== pollId);
+        setActivePolls(updatedActivePolls);
+        setInactivePolls(prev => [...prev, deactivatedPoll]);
+
+        const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
+        try {
+            const response = await axios.put(`http://localhost:8080/api/polls/${pollId}/deactivate`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+
+            if (response.status === 200) {
+                alert('Poll deactivated successfully!');
+            } else {
+                console.error('Error deactivating poll:', response.data);
+                // Revert the state changes if API call fails
+                setActivePolls(prev => [...prev, deactivatedPoll]);
+                setInactivePolls(prev => prev.filter(poll => poll.id !== pollId));
+            }
+        } catch (error) {
+            console.error('Error deactivating poll:', error);
+            // Revert the state changes if API call fails
+            setActivePolls(prev => [...prev, deactivatedPoll]);
+            setInactivePolls(prev => prev.filter(poll => poll.id !== pollId));
+        }
+    };
+
+    const renderActivePolls = (pollsList) => {
+        return pollsList.map((poll, index) => (
+            <div key={poll.id} className="mb-4">
+                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-md shadow-sm">
+                    <div>
+                        <h3 className="text-lg font-semibold">{poll.name}</h3>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Link to={`/pollPage/${poll.id}`}>
+                            <button className="focus:outline-none focus:ring-2 focus:border-transparent">
+                                <FontAwesomeIcon icon={faEye} className="text-gray-400" />
+                            </button>
+                        </Link>
+                        <button
+                            onClick={() => deactivatePoll(poll.id)}
+                            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+                        >
+                            End Poll
+                        </button>
+                    </div>
+                </div>
+                {index < pollsList.length - 1 && <div className="border-b border-gray-300 my-4"></div>}
+            </div>
+        ));
+    };
+
+    const renderInactivePolls = (pollsList) => {
+        return pollsList.map((poll, index) => (
+            <div key={poll.id} className="mb-4">
+                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-md shadow-sm">
+                    <div>
+                        <h3 className="text-lg font-semibold">{poll.name}</h3>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Link to={`/pollPage/${poll.id}`}>
+                            <button className="focus:outline-none focus:ring-2 focus:border-transparent">
+                                <FontAwesomeIcon icon={faEye} className="text-gray-400" />
+                            </button>
+                        </Link>
+                        {/* This button might not be required for inactive polls, you can remove it if not needed */}
+                        <button
+                            onClick={() => {/* handle some other action for inactive polls if required */}}
+                            className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                        >
+                            Inactive
+                        </button>
+                    </div>
+                </div>
+                {index < pollsList.length - 1 && <div className="border-b border-gray-300 my-4"></div>}
+            </div>
+        ));
+    };
+
+
+
     return (
         <div className="home-background min-h-screen flex flex-col items-center justify-center bg-gray-200">
             <div className="homeContainer md:w-2/3 lg:w-1/2 xl:w-1/3 bg-white p-4 md:p-6 lg:p-8 rounded-xl shadow-lg flex flex-col justify-between items-center">
                 <h1 className="mb-10 text-4xl font-bold text-gray-800">FeedbackApp Dashboard</h1>
 
-                <div className="pollSection w-full mb-6">
-                    <h2 className="text-2xl font-bold mb-4">My Polls</h2>
-                    {polls.length === 0 ? (
-                        <p className="text-xl text-gray-600">No active polls available.</p>
-                    ) : (
-                        polls.map(poll => (
-                            <div key={poll.id} className="flex items-center">
-                                <div>
-                                    <h3>{poll.name}</h3>
-                                    {/* Add more details about each poll as needed */}
-                                </div>
-                                <div id={"managePoll"} className="ml-auto"> {/* Use ml-auto to push button to the right */}
-                                    <Link to={`/pollPage/${poll.id}`}> {/* Pass the poll ID as a URL parameter */}
-                                        <button className=" focus:outline-none focus:ring-2 focus:border-transparent">
-                                            <FontAwesomeIcon icon={faGear} className="text-gray-400" />                                        </button>
-                                    </Link>
-                                </div>
-                            </div>
-                        ))
-                    )}
+                <div className="flex w-full mb-6 justify-between">
+                    <div className="pollSection w-1/2 pr-2">
+                        <h2 className="text-2xl font-bold mb-4">My Active Polls</h2>
+                        {renderActivePolls(activePolls)}
+                    </div>
 
-
+                    <div className="pollSection w-1/2 pl-2">
+                        <h2 className="text-2xl font-bold mb-4">My Inactive Polls</h2>
+                        {renderInactivePolls(inactivePolls)}
+                    </div>
                 </div>
+
                 <Link to="/createPoll">
                     <Button text="Create New Poll" />
                 </Link>
@@ -153,4 +234,11 @@ function Home() {
 }
 
 export default Home;
+
+
+
+
+
+
+
 
