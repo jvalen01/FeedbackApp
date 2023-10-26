@@ -110,7 +110,7 @@ function Home() {
             });
 
             if (response.status === 200) {
-                alert('Poll deactivated successfully!');
+                console.log('Poll deactivated successfully!');
             } else {
                 console.error('Error deactivating poll:', response.data);
                 // Revert the state changes if API call fails
@@ -124,6 +124,40 @@ function Home() {
             setInactivePolls(prev => prev.filter(poll => poll.id !== pollId));
         }
     };
+
+    const activatePoll = async (pollId) => {
+        const activatedPoll = inactivePolls.find(poll => poll.id === pollId);
+        if (!activatedPoll) return; // Return early if the poll isn't found
+
+        // Update local states first
+        const updatedInactivePolls = inactivePolls.filter(poll => poll.id !== pollId);
+        setInactivePolls(updatedInactivePolls);
+        setActivePolls(prev => [...prev, activatedPoll]);
+
+        const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
+        try {
+            const response = await axios.put(`http://localhost:8080/api/polls/${pollId}/activate`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+
+            if (response.status === 200) {
+                console.log('Poll activated successfully!');
+            } else {
+                console.error('Error activating poll:', response.data);
+                // Revert the state changes if API call fails
+                setInactivePolls(prev => [...prev, activatedPoll]);
+                setActivePolls(prev => prev.filter(poll => poll.id !== pollId));
+            }
+        } catch (error) {
+            console.error('Error activating poll:', error);
+            // Revert the state changes if API call fails
+            setInactivePolls(prev => [...prev, activatedPoll]);
+            setActivePolls(prev => prev.filter(poll => poll.id !== pollId));
+        }
+    };
+
 
     const renderActivePolls = (pollsList) => {
         return pollsList.map((poll, index) => (
@@ -151,6 +185,8 @@ function Home() {
         ));
     };
 
+
+
     const renderInactivePolls = (pollsList) => {
         return pollsList.map((poll, index) => (
             <div key={poll.id} className="mb-4">
@@ -164,12 +200,11 @@ function Home() {
                                 <FontAwesomeIcon icon={faEye} className="text-gray-400" />
                             </button>
                         </Link>
-                        {/* This button might not be required for inactive polls, you can remove it if not needed */}
                         <button
-                            onClick={() => {/* handle some other action for inactive polls if required */}}
-                            className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                            onClick={() => activatePoll(poll.id)} // Assuming you will define an activatePoll function
+                            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"
                         >
-                            Inactive
+                            Start Poll
                         </button>
                     </div>
                 </div>
@@ -180,9 +215,10 @@ function Home() {
 
 
 
+
     return (
         <div className="home-background min-h-screen flex flex-col items-center justify-center bg-gray-200">
-            <div className="homeContainer md:w-2/3 lg:w-1/2 xl:w-1/3 bg-white p-4 md:p-6 lg:p-8 rounded-xl shadow-lg flex flex-col justify-between items-center">
+            <div className="homeContainer md:w-2/3 lg:w-1/2 xl:w-1/3 bg-white p-4 md:p-6 lg:p-8 rounded-xl shadow-lg flex flex-col justify-between ">
                 <h1 className="mb-10 text-4xl font-bold text-gray-800">FeedbackApp Dashboard</h1>
 
                 <div className="flex w-full mb-6 justify-between">
@@ -197,9 +233,12 @@ function Home() {
                     </div>
                 </div>
 
-                <Link to="/createPoll">
-                    <Button text="Create New Poll" />
-                </Link>
+
+                <div className="mb-10"> {/* Add the desired margin to this div */}
+                    <Link to="/createPoll">
+                        <Button text="Create New Poll" />
+                    </Link>
+                </div>
 
                 <div className="activitySection w-full mb-6 p-4 bg-gray-100 rounded-md shadow-md">
                     <h2 className="text-3xl font-bold mb-6 text-gray-700">Participate in a poll</h2>

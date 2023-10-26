@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 
 function PollPage() {
     const [pollData, setPollData] = useState(null);
@@ -58,12 +58,12 @@ function PollPage() {
             <div className="border-b border-gray-300 mb-6"></div>
 
             <div className="flex items-center mb-6">
-                <h3 className="text-xl font-semibold mr-2">Question:</h3>
+                <h2 className="text-xl font-semibold mr-2">Question:</h2>
                 <span className="text-xl">{pollData.question.question}</span> {/* Text size adjusted */}
             </div>
 
             <div className="flex items-center mb-6">
-                <h3 className="text-xl font-semibold mr-2">Join Code:</h3>
+                <h2 className="text-xl font-semibold mr-2">Join Code:</h2>
                 <span className="text-xl">{pollData.code}</span> {/* Text size adjusted */}
             </div>
 
@@ -88,15 +88,20 @@ function PollPage() {
             <div className="border-b border-gray-300 mb-6"></div>
 
             <div className="flex items-center mb-10">
-                <h3 className="text-xl font-semibold mr-2">Total votes:</h3>
+                <h2 className="text-xl font-semibold mr-2">Total votes:</h2>
                 <span className="text-xl">{pollData.question.totalVotes}</span> {/* Text size adjusted */}
             </div>
 
             <div className="border-b border-gray-300 mb-6"></div>
 
             <div className="flex items-center mb-4">
-                <h3 className="text-xl font-semibold mr-2">Created By:</h3>
+                <h2 className="text-xl font-semibold mr-2">Created By:</h2>
                 <span className="text-xl">{pollData.user.username}</span> {/* Text size adjusted */}
+            </div>
+            <div>
+                <Link to="/home">
+                    <button className="home-button" type="button">Home</button>
+                </Link>
             </div>
         </div>
     );

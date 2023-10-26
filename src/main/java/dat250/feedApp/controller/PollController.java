@@ -128,5 +128,14 @@ public class PollController {
         }
     }
 
+    @PutMapping("/{id}/activate")
+    public ResponseEntity<Poll> activatePoll(@PathVariable Long id) {
+        if (pollService.existsById(id)) {
+            return ResponseEntity.ok(pollService.setPollActiveState(id, true));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
 
