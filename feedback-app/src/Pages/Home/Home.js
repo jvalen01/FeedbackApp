@@ -186,8 +186,6 @@ function Home() {
         ));
     };
 
-
-
     const renderInactivePolls = (pollsList) => {
         return pollsList.map((poll, index) => (
             <div key={poll.id} className="mb-4">
