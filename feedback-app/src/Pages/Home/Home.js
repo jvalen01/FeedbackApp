@@ -159,6 +159,27 @@ function Home() {
         }
     };
 
+    const deletePoll = async (pollId) => {
+        const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
+        try {
+            const response = await axios.delete(`http://localhost:8080/api/polls/${pollId}`, {
+                headers: {
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+
+            if (response.status === 200) {
+                console.log('Poll deleted successfully!');
+                // Update the state to remove the deleted poll
+                setInactivePolls(prev => prev.filter(poll => poll.id !== pollId));
+            } else {
+                console.error('Error deleting poll:', response.data);
+            }
+        } catch (error) {
+            console.error('Error deleting poll:', error);
+        }
+    };
+
 
     const renderActivePolls = (pollsList) => {
         return pollsList.map((poll, index) => (
@@ -206,6 +227,12 @@ function Home() {
                             className="bg-green-500 text-white px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 rounded-lg"
                         >
                             Start Poll
+                        </button>
+                        <button
+                            onClick={() => deletePoll(poll.id)}
+                            className="bg-red-500 text-white px-4 py-2 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-lg"
+                        >
+                            Delete Poll
                         </button>
                     </div>
                 </div>
