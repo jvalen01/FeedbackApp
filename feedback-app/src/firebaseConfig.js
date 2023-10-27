@@ -11,13 +11,13 @@ import {
 } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCQlMwrOrejMrA-qb_NtEdeA_z51qUnKIg",
-  authDomain: "feedbackapp-f253f.firebaseapp.com",
-  projectId: "feedbackapp-f253f",
-  storageBucket: "feedbackapp-f253f.appspot.com",
-  messagingSenderId: "444228604992",
-  appId: "1:444228604992:web:8ca15b9e9e48ccbbbabba5",
-  measurementId: "G-44SVGMSQXR"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_API_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 class Firebase {
   constructor() {
