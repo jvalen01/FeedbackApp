@@ -84,6 +84,11 @@ public class PollController {
         // Decode the ID token to get the Firebase UID
         String firebaseUID = FirebaseFunctions.getUidFromToken(idToken);
 
+        // Save the question first
+        Question savedQuestion = questionService.save(poll.getQuestion());
+        poll.setQuestion(savedQuestion);
+
+
         // Find the user by Firebase UID
         User user = userService.findByFirebaseUID(firebaseUID)
                 .orElseThrow(() -> new RuntimeException("User not found with Firebase UID: " + firebaseUID));
