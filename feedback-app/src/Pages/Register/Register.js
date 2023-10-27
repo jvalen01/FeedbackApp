@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Firebase from '../../firebaseConfig';
 import "../../styles/components.css";
 import Button from '../../Components/Button';
+import BackButton from '../../Components/BackButton';
 
 const firebaseInstance = new Firebase();
 
@@ -51,6 +52,7 @@ const Register = () => {
     return (
         <div className="welcome-background min-h-[80vh] flex items-center justify-center bg-gray-200">
             <div className="beigeBox md:w-1/2 lg:w-1/3 xl:w-1/4 bg-white p-4 md:p-6 lg:p-8 rounded-xl shadow-lg flex flex-col justify-center items-center">
+            <BackButton />
                 <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">Register</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
