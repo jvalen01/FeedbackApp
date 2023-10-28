@@ -3,10 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BiArrowBack } from 'react-icons/bi';
 import '../styles/components.css';
 
-const BackButton = () => {
+const HomeButton = () => {
   
   return (
-   <Link to="/">
+   <Link to="/home">
     <button className="back-button">
       <BiArrowBack size={30} />
     </button>
@@ -14,4 +14,4 @@ const BackButton = () => {
   );
 };
 
-export default BackButton;
+export default HomeButton;

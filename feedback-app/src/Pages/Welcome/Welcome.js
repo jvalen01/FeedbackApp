@@ -14,10 +14,10 @@ function Welcome() {
 </p>
                 <div className="buttonContainer space-x-4">
                     <Link to="/login">
-                        <Button text="Login" />
+                        <Button text="Login" type="submit"/>
                     </Link>
                     <Link to="/register">
-                        <Button text="Register" />
+                        <Button text="Register" type="submit"/>
                     </Link>
                 </div>
             </div>
