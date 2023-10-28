@@ -26,6 +26,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.google.firebase:firebase-admin:7.2.0")
 	implementation("org.testng:testng:7.1.0")
+	implementation ("org.springframework.boot:spring-boot-starter-websocket")
 
 
 	compileOnly("org.projectlombok:lombok")

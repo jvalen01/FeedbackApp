@@ -2,7 +2,9 @@ package dat250.feedApp.controller;
 
 import dat250.feedApp.model.Vote;
 import dat250.feedApp.service.VoteService;
+import dat250.feedApp.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +14,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/votes")
 public class VoteController {
-
     @Autowired
     private VoteService voteService;
 
@@ -32,11 +33,29 @@ public class VoteController {
             return ResponseEntity.notFound().build();
         }
     }
-
     // POST (create) a vote
+    @Autowired
+    private WebSocketService webSocketService;
+
     @PostMapping
     public ResponseEntity<Vote> createVote(@RequestBody Vote vote) {
-        return ResponseEntity.ok(voteService.saveVote(vote));
+        try {
+            Vote savedVote = voteService.saveVote(vote);
+            Vote pollID = JSON.stringify(vote);
+            if (savedVote != null) {
+                // Get updated poll data after vote
+                Poll updatedPoll = getUpdatedPoll(); // Implement this method to fetch updated poll data
+                webSocketController.sendMessage(JSON.stringify(updatedPoll));
+                return ResponseEntity.ok(savedVote);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } catch (Exception e) {
+            // Log the exception for debugging purposes
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     // PUT (update) a vote

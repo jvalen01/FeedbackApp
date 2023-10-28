@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
 
-function PollDisplay(props) {
+function PollVote(props) {
     const { code } = useParams();
     const [pollData, setPollData] = useState(null);
     const [answer, setAnswer] = useState(''); // state to hold the answer input value
@@ -80,4 +80,4 @@ function PollDisplay(props) {
     );
 }
 
-export default PollDisplay;
+export default PollVote;
