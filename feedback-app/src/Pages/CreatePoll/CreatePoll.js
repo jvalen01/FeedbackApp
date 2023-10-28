@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import Firebase from '../../firebaseConfig';
 import './CreatePoll.css';
 import {Link, useNavigate} from "react-router-dom";
-
+import "../../styles/components.css"
+import Button from "../../Components/Button";
+import HomeButton from "../../Components/HomeButton";
 const firebaseInstance = new Firebase();
 
 function CreatePoll() {
@@ -83,8 +85,10 @@ function CreatePoll() {
 
 
     return (
-        <div className="container">
-            <h2 className="title">Create A New Poll</h2>
+<div className="welcome-background min-h-[80vh] flex items-center justify-center bg-gray-200"> 
+        <div className="beigeBox md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 md:p-6 lg:p-8 rounded-xl shadow-lg flex flex-col justify-center items-center">
+           <HomeButton />
+           <h2 className="title">Create A New Poll</h2>
             <form className="form" onSubmit={handleSubmit}>
                 <div className="input-group">
                     <label className="label">Poll Name:</label>
@@ -127,12 +131,11 @@ function CreatePoll() {
                         </label>
                     </div>
                 </div>
-                {/* Add other input fields for additional poll details */}
-                <button className="submit-button" type="submit">Create</button>
-                <Link to="/home">
-                    <button className="home-button" type="button">Home</button>
-                </Link>
+                <div className="flex items-center justify-center space-x-4 mt-4">
+                <Button type="submit" text="Create" />
+            </div>
             </form>
+            </div>
         </div>
     );
 }
