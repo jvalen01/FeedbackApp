@@ -28,6 +28,7 @@ dependencies {
 	implementation("org.testng:testng:7.1.0")
 	implementation("org.springframework.boot:spring-boot-starter-amqp")
 	implementation ("org.springframework.boot:spring-boot-starter-websocket")
+	implementation ("com.fasterxml.jackson.core:jackson-databind:2.12.5")
 
 
 	compileOnly("org.projectlombok:lombok")

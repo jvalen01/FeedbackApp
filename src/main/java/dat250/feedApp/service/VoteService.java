@@ -1,5 +1,7 @@
 package dat250.feedApp.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import dat250.feedApp.model.Question;
 import dat250.feedApp.model.Vote;
 import dat250.feedApp.model.User;
@@ -8,6 +10,7 @@ import dat250.feedApp.repository.UserRepository;
 import dat250.feedApp.repository.VoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,9 +40,12 @@ public class VoteService {
     public Optional<Vote> findVoteById(Long id) {
         return voteRepository.findById(id);
     }
+@RabbitListener(queues = "${rabbitmq.queue}")
+    public Vote saveVote(String message) {
+        Vote vote = new Gson().fromJson(message, Vote.class);
+        System.out.println(message);
 
-    public Vote saveVote(Vote vote) {
-        // Fetch the User entity from the database using firebaseUID
+        /*
         String username = vote.getUser().getUsername();
         logger.info("FirebaseUID: " + username);
         User existingUser = userRepository.findByUsername(username)
@@ -72,7 +78,8 @@ public class VoteService {
 
 
         // Now save the vote
-        return voteRepository.save(vote);
+        return voteRepository.save(vote);*/
+    return null;
     }
 
     public void deleteVote(Long id) {

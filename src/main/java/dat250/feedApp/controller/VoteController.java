@@ -1,10 +1,12 @@
 package dat250.feedApp.controller;
 
+import com.google.api.client.json.Json;
 import dat250.feedApp.model.Vote;
 import dat250.feedApp.model.Poll;
 import dat250.feedApp.service.VoteService;
 import dat250.feedApp.service.WebSocketService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -54,11 +56,11 @@ public class VoteController {
     private String routingkey;
 
     @PostMapping
-    public ResponseEntity<Vote> createVote(@RequestBody Vote vote) {
-        Vote savedVote = voteService.saveVote(vote);
-        rabbitTemplate.convertAndSend(exchange, routingkey, "Hello from RabbitMQ!");
-        webSocketService.sendMessage("Hello World");  // This line sends the message to WebSocket subscribers
-        return ResponseEntity.ok(voteService.saveVote(vote));
+    public ResponseEntity<String> createVote(@RequestBody Vote vote) {
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.convertAndSend(exchange, routingkey, vote);
+        webSocketService.sendMessage("Vote received and will be processed!");  // Optional: inform WebSocket subscribers
+        return ResponseEntity.ok("Vote received and is being processed");
     }
 
 
@@ -67,7 +69,7 @@ public class VoteController {
     public ResponseEntity<Vote> updateVote(@PathVariable Long id, @RequestBody Vote updatedVote) {
         if (voteService.existsById(id)) {
             updatedVote.setId(id);  // Ensure the ID is set to the one from the path
-            return ResponseEntity.ok(voteService.saveVote(updatedVote));
+            return ResponseEntity.ok(voteService.saveVote("FIX LATER"));
         } else {
             return ResponseEntity.notFound().build();
         }
