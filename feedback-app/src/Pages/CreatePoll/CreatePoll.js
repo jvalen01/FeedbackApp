@@ -23,8 +23,16 @@ function CreatePoll() {
             question: pollQuestionText, // Use the question text input
             yesVotes: 0,
             noVotes: 0,
-            totalVotes: 0,
+            totalVotes: 0
         };
+
+        const pollObject = {
+            name: pollName,
+            active: true,
+            accessMode: pollAccessMode,
+            question: questionObject
+        }
+
         // Send POST request to Spring Boot backend with poll details
         try {
             const response = await fetch('http://localhost:8080/api/polls', {
@@ -33,15 +41,7 @@ function CreatePoll() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`  // Passing ID token in header
                 },
-                body: JSON.stringify({
-                    name: pollName,
-                    active: true,
-                    accessMode: pollAccessMode,
-                    question: questionObject // Pass the question ID
-
-
-                    // ... add other poll details
-                })
+                body: JSON.stringify(pollObject)
             });
 
             const responseData = await response.json();
@@ -54,7 +54,33 @@ function CreatePoll() {
         } catch (error) {
             console.error("There was an error creating the poll", error);
         }
+
+
+        fetch('http://localhost:8080/api/sendToDweet', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(pollObject),
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Data sent to Dweet via proxy:', data);
+              })
+              .catch(error => {
+                console.error('Error sending data to Dweet via proxy:', error);
+              });
+
     };
+
+
+
+
+
+
+
+
+
 
     return (
         <div className="container">
