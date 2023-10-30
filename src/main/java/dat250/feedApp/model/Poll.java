@@ -51,4 +51,5 @@ public class Poll {
                 ", user=" + user +
                 '}';
     }
+
 }

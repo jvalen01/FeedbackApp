@@ -102,9 +102,11 @@ public class PollController {
         String uniqueCode = PollCodeGenerator.generateCode();
         poll.setCode(uniqueCode);
 
-        dweetioController.sendToDweet(poll);
+        Poll savedPoll = pollService.save(poll);
 
-        return pollService.save(poll);
+        dweetioController.sendToDweet(savedPoll);
+
+        return savedPoll;
     }
 
 
