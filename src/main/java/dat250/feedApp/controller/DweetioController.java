@@ -1,5 +1,6 @@
 package dat250.feedApp.controller;
 
+import dat250.feedApp.model.Poll;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,21 +14,26 @@ import java.util.Map;
 @RequestMapping("/api")
 public class DweetioController {
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
 
+
+    /*
     public DweetioController(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    @PostMapping("/sendToDweet")
-    public Object sendToDweet(@RequestBody Map<String, Object> requestBody) {
+     */
+
+    public DweetioController() {
+
+    }
+
+    //@PostMapping("/sendToDweet")
+    public Object sendToDweet(Poll poll){ //@RequestBody Map<String, Object> requestBody) {
         String dweetUrl = "https://dweet.io/dweet/for/FeedbackAppDweet";
 
-        System.out.println(dweetUrl);
-        System.out.println(requestBody);
-
         // Forward the request to Dweet.io
-        return restTemplate.postForObject(dweetUrl, requestBody, Object.class);
+        return restTemplate.postForObject(dweetUrl, poll, Poll.class);
     }
 
 
