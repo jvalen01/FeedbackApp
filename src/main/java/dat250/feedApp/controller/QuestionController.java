@@ -63,5 +63,16 @@ public class QuestionController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // Return PollID from QuestionID
+    @GetMapping("/poll/{id}")
+    public ResponseEntity<Long> getPollIdFromQuestionId(@PathVariable Long id) {
+        Optional<Question> question = questionRepository.findById(id);
+        if (question.isPresent()) {
+            return ResponseEntity.ok(question.get().getPoll().getId());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
 

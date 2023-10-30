@@ -1,6 +1,7 @@
 package dat250.feedApp.controller;
 
 import dat250.feedApp.model.Vote;
+import dat250.feedApp.model.Poll;
 import dat250.feedApp.service.VoteService;
 import dat250.feedApp.service.WebSocketService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.Optional;
