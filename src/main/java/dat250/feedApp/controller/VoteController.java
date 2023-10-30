@@ -3,7 +3,9 @@ package dat250.feedApp.controller;
 import dat250.feedApp.model.Vote;
 import dat250.feedApp.service.VoteService;
 import dat250.feedApp.service.WebSocketService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +16,16 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/votes")
 public class VoteController {
-    @Autowired
     private VoteService voteService;
+    private WebSocketService webSocketService;
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    public VoteController(VoteService voteService, WebSocketService webSocketService, RabbitTemplate rabbitTemplate) {
+        this.voteService = voteService;
+        this.webSocketService = webSocketService;
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
 
     // GET all votes
     @GetMapping
@@ -34,29 +44,21 @@ public class VoteController {
         }
     }
     // POST (create) a vote
-    @Autowired
-    private WebSocketService webSocketService;
+
+    @Value("${rabbitmq.exchange.name}")
+    private String exchange;
+
+    @Value("${rabbitmq.routingkey}")
+    private String routingkey;
 
     @PostMapping
     public ResponseEntity<Vote> createVote(@RequestBody Vote vote) {
-        try {
-            Vote savedVote = voteService.saveVote(vote);
-            Vote pollID = JSON.stringify(vote);
-            if (savedVote != null) {
-                // Get updated poll data after vote
-                Poll updatedPoll = getUpdatedPoll(); // Implement this method to fetch updated poll data
-                webSocketController.sendMessage(JSON.stringify(updatedPoll));
-                return ResponseEntity.ok(savedVote);
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        } catch (Exception e) {
-            // Log the exception for debugging purposes
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        Vote savedVote = voteService.saveVote(vote);
+        rabbitTemplate.convertAndSend(exchange, routingkey, "Hello from RabbitMQ!");
+        webSocketService.sendMessage("Hello World");  // This line sends the message to WebSocket subscribers
+        return ResponseEntity.ok(voteService.saveVote(vote));
     }
+
 
     // PUT (update) a vote
     @PutMapping("/{id}")

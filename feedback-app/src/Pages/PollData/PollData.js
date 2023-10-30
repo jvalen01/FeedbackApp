@@ -7,10 +7,17 @@ function PollData() {
     const { pollID } = useParams();
     const webSocketData = WebSocket();
     const navigate = useNavigate();
+    const [wsMessage, setWsMessage] = useState("");
     useEffect(() => {
+        console.log("WebSocket data in component:", webSocketData);
+
         if (webSocketData) {
-            const updatedPollData = JSON.parse(webSocketData);
-            setPollData(updatedPollData);
+            if (webSocketData === "Hello World") {
+                setWsMessage(webSocketData);
+            } else {
+                const updatedPollData = JSON.parse(webSocketData);
+                setPollData(updatedPollData);
+            }
         }
     }, [webSocketData]);
     useEffect(() => {
@@ -56,6 +63,7 @@ function PollData() {
     // Render poll data with Tailwind styling
     return (
         <div className="w-4/5 max-w-6xl min-h-screen mx-auto p-8 bg-gray-100 shadow-md rounded-lg">
+            {wsMessage && <div className="mb-4 text-green-600">{wsMessage}</div>}
             <div className="flex items-center mb-6">
                 <h2 className="text-xl font-bold mr-2">Poll name:</h2> {/* Bold and text size adjusted */}
                 <span className="text-xl">{pollData.name}</span> {/* Text size adjusted */}
@@ -110,6 +118,7 @@ function PollData() {
                 </Link>
             </div>
         </div>
+
     );
 }
 

@@ -14,6 +14,7 @@ const WebSocket = () => {
       console.log('Connected: ' + frame);
       stompClient.subscribe('/topic/message', function(message) {
         console.log("Received: " + message.body);
+        console.log(message);
         setData(message.body);  // Update the state with received data
       });
     });

@@ -32,7 +32,6 @@ function PollVote(props) {
             user: {
                 username: pollData.user.username
             }
-            // ... add other necessary properties such as user, etc.
         };
         console.log('Sending vote to backend:', vote);
 
