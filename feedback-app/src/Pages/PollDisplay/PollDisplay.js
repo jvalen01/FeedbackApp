@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
+import Firebase from "../../firebaseConfig";
+
+const firebaseInstance = new Firebase();
 
 function PollDisplay(props) {
     const { code } = useParams();
@@ -11,6 +14,13 @@ function PollDisplay(props) {
     useEffect(() => {
         axios.get(`http://localhost:8080/api/polls/code/${code}`)
             .then(response => {
+                console.log("Poll data display :", response.data);
+                if (response.data.accessMode === "private" && !firebaseInstance.auth.currentUser) {
+                    // This is a private poll and the user is not authenticated
+                    alert("This is a private poll. Please log in to view it.");
+                    navigate('/login'); // or any other appropriate route
+                    return;
+                }
                 setPollData(response.data);
             })
             .catch(error => {

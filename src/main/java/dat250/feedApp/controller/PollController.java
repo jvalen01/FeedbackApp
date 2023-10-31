@@ -53,14 +53,27 @@ public class PollController {
         }
     }
     @GetMapping("/code/{code}")
-    public ResponseEntity<Poll> getPollByCode(@PathVariable String code) {
+    public ResponseEntity<Poll> getPollByCode(@PathVariable String code, @RequestHeader(name = "Authorization", required = false) String idToken) {
         Optional<Poll> poll = pollService.findByCode(code);
         if (poll.isPresent()) {
+            // Check if the poll is private and no valid user token is provided
+            if (poll.get().getAccessMode().equals("private")) {
+                if (idToken == null) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 403 Forbidden
+                }
+                idToken = idToken.replace("Bearer ", "");
+                try {
+                    FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+                } catch (FirebaseAuthException e) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 403 Forbidden
+                }
+            }
             return ResponseEntity.ok(poll.get());
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
 
     @GetMapping("/user")
     public ResponseEntity<List<Poll>> getPollsByUser(@RequestHeader(name = "Authorization") String idToken) {
