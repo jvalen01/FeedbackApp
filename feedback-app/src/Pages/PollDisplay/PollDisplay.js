@@ -12,27 +12,41 @@ function PollDisplay(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/api/polls/code/${code}`)
-            .then(response => {
-                console.log("Poll data display :", response.data);
-                if (response.data.accessMode === "private" && !firebaseInstance.auth.currentUser) {
-                    // This is a private poll and the user is not authenticated
-                    alert("This is a private poll. Please log in to view it.");
-                    navigate('/login'); // or any other appropriate route
-                    return;
+        // Check if the user is logged in and get the ID token
+        const fetchTokenAndData = async () => {
+            let headers = {};
+
+            if (firebaseInstance.auth.currentUser) {
+                try {
+                    const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
+                    headers.Authorization = `Bearer ${idToken}`;
+                } catch (error) {
+                    console.error("Error getting ID token:", error);
                 }
-                setPollData(response.data);
-            })
-            .catch(error => {
-                console.error("Error fetching poll:", error);
-            });
+            }
+
+            axios.get(`http://localhost:8080/api/polls/code/${code}`, { headers })
+                .then(response => {
+                    console.log("Poll data display :", response.data);
+                    setPollData(response.data);
+                })
+                .catch(error => {
+                    if (error.response && error.response.status === 403) {
+                        alert("Unauthorized access. Please log in.");
+                        navigate('/login'); // redirect to the login page
+                    } else {
+                        console.error("Error fetching poll:", error);
+                    }
+                });
+        };
+
+        fetchTokenAndData();
+
     }, [code]);
 
     // Handle the form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Submitted Answer:", answer);
-
         const vote = {
             answer: answer === 'Yes',
             question: {

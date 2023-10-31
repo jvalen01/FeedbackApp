@@ -54,24 +54,31 @@ public class PollController {
     }
     @GetMapping("/code/{code}")
     public ResponseEntity<Poll> getPollByCode(@PathVariable String code, @RequestHeader(name = "Authorization", required = false) String idToken) {
-        Optional<Poll> poll = pollService.findByCode(code);
-        if (poll.isPresent()) {
-            // Check if the poll is private and no valid user token is provided
-            if (poll.get().getAccessMode().equals("private")) {
-                if (idToken == null) {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 403 Forbidden
-                }
-                idToken = idToken.replace("Bearer ", "");
-                try {
-                    FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-                } catch (FirebaseAuthException e) {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 403 Forbidden
-                }
-            }
-            return ResponseEntity.ok(poll.get());
-        } else {
+        Optional<Poll> pollOptional = pollService.findByCode(code);
+
+        if (!pollOptional.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+
+        Poll poll = pollOptional.get();
+
+        // If the poll is private
+        if (poll.getAccessMode().equals("private")) {
+            if (idToken == null || !idToken.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 403 Forbidden
+            }
+
+            idToken = idToken.replace("Bearer ", "");
+
+            try {
+                // Verify the ID token
+                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            } catch (FirebaseAuthException e) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 403 Forbidden
+            }
+        }
+
+        return ResponseEntity.ok(poll);
     }
 
 
