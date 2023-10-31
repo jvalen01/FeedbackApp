@@ -47,24 +47,31 @@ function PollDisplay(props) {
     // Handle the form submission
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        const loggedInUser = firebaseInstance.auth.currentUser;
+
         const vote = {
             answer: answer === 'Yes',
             question: {
                 id: pollData.question.id,
                 question: pollData.question.question
-            },
-            user: {
-                username: pollData.user.username
             }
-            // ... add other necessary properties such as user, etc.
         };
+
+        if (loggedInUser) {
+            vote.user = {
+                username: pollData.user.username
+            };
+        }
+
         console.log('Sending vote to backend:', vote);
 
 
         axios.post('http://localhost:8080/api/votes', vote)
             .then(response => {
                 console.log('Vote submitted successfully!', response.data);
-                navigate('/home')
+                alert("Vote submitted successfully!");
+                navigate('/ThankYou');
 
                 // You may want to fetch the updated pollData again or redirect the user, etc.
             })

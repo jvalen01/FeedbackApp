@@ -32,7 +32,7 @@ public class Question {
     @OneToOne(mappedBy = "question", cascade = CascadeType.ALL)
     private Poll poll;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question")
     private List<Vote> votes = new ArrayList<>();
 
     @Override
