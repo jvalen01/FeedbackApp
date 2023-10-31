@@ -70,7 +70,6 @@ function PollDisplay(props) {
         axios.post('http://localhost:8080/api/votes', vote)
             .then(response => {
                 console.log('Vote submitted successfully!', response.data);
-                alert("Vote submitted successfully!");
                 navigate('/ThankYou');
 
                 // You may want to fetch the updated pollData again or redirect the user, etc.
