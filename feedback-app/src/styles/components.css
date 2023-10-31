@@ -7,13 +7,14 @@
 }
 .beigeBox {
     position: relative;
-    background-color: rgba(245, 245, 220, 0.9); /* Beige with 70% opacity */
+    background-color: rgba(255, 255, 255, 0.9); /* Beige with 70% opacity */
     border: 1px solid black;
     border-radius: 8px;
     padding: 40px; /* Increased padding for a larger box */
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 50%; /* You can adjust this to your preference */
     height: 60%;
     max-width: 600px; /* Optional: Maximum width of the box */

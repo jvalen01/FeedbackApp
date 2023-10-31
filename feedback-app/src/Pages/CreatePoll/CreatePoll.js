@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import Firebase from '../../firebaseConfig';
 import './CreatePoll.css';
 import {Link, useNavigate} from "react-router-dom";
-
+import "../../styles/components.css"
+import Button from "../../Components/Button";
+import HomeButton from "../../Components/HomeButton";
 const firebaseInstance = new Firebase();
 
 function CreatePoll() {
@@ -23,8 +25,16 @@ function CreatePoll() {
             question: pollQuestionText, // Use the question text input
             yesVotes: 0,
             noVotes: 0,
-            totalVotes: 0,
+            totalVotes: 0
         };
+
+        const pollObject = {
+            name: pollName,
+            active: true,
+            accessMode: pollAccessMode,
+            question: questionObject
+        }
+
         // Send POST request to Spring Boot backend with poll details
         try {
             const response = await fetch('http://localhost:8080/api/polls', {
@@ -33,15 +43,7 @@ function CreatePoll() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`  // Passing ID token in header
                 },
-                body: JSON.stringify({
-                    name: pollName,
-                    active: true,
-                    accessMode: pollAccessMode,
-                    question: questionObject // Pass the question ID
-
-
-                    // ... add other poll details
-                })
+                body: JSON.stringify(pollObject)
             });
 
             const responseData = await response.json();
@@ -54,11 +56,39 @@ function CreatePoll() {
         } catch (error) {
             console.error("There was an error creating the poll", error);
         }
+
+
+        fetch('http://localhost:8080/api/sendToDweet', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(pollObject),
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Data sent to Dweet via proxy:', data);
+              })
+              .catch(error => {
+                console.error('Error sending data to Dweet via proxy:', error);
+              });
+
     };
 
+
+
+
+
+
+
+
+
+
     return (
-        <div className="container">
-            <h2 className="title">Create A New Poll</h2>
+<div className="welcome-background min-h-[80vh] flex items-center justify-center bg-gray-200"> 
+        <div className="beigeBox md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 md:p-6 lg:p-8 rounded-xl shadow-lg flex flex-col justify-center items-center">
+           <HomeButton />
+           <h2 className="title">Create A New Poll</h2>
             <form className="form" onSubmit={handleSubmit}>
                 <div className="input-group">
                     <label className="label">Poll Name:</label>
@@ -101,12 +131,11 @@ function CreatePoll() {
                         </label>
                     </div>
                 </div>
-                {/* Add other input fields for additional poll details */}
-                <button className="submit-button" type="submit">Create</button>
-                <Link to="/home">
-                    <button className="home-button" type="button">Home</button>
-                </Link>
+                <div className="flex items-center justify-center space-x-4 mt-4">
+                <Button type="submit" text="Create" />
+            </div>
             </form>
+            </div>
         </div>
     );
 }

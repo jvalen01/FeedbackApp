@@ -13,7 +13,7 @@ function Login() {
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-        e.preventDefault();
+              e.preventDefault();
         try {
             await firebaseInstance.signIn(email, password);
             const currentUser = firebaseInstance.auth.currentUser;
@@ -31,7 +31,7 @@ function Login() {
 
     return (
         <div className="welcome-background min-h-[80vh] flex items-center justify-center bg-gray-200">
-            <div className="beigeBox relative md:w-1/2 lg:w-1/3 xl:w-1/4 bg-white p-4 md:p-6 lg:p-8 rounded-xl shadow-lg flex flex-col justify-center items-center">
+            <div className="beigeBox relative md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 md:p-6 lg:p-8 rounded-xl shadow-lg flex flex-col justify-center items-center">
                 <div className="absolute top-0 left-0 p-4">
                     <BackButton />
                 </div>
@@ -58,7 +58,7 @@ function Login() {
                         />
                     </div>
                     <div className="flex items-center justify-center">
-                        <Button text="Login" onClick={handleLogin} type="submit" />
+                        <Button text="Login" type="submit"/>
                     </div>
                 </form>
             </div>

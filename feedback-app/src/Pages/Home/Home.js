@@ -1,5 +1,5 @@
-
 import Button from '../../Components/Button';
+import LogOutButton from '../../Components/LogOutButton';
 import '../../styles/components.css';
 import './Home.css'
 import React, { useState, useEffect } from 'react';
@@ -194,12 +194,12 @@ function Home() {
                                 <FontAwesomeIcon icon={faEye} className="text-gray-400" />
                             </button>
                         </Link>
-                        <button
+                        <Button text="End Poll"
                             onClick={() => deactivatePoll(poll.id)}
                             className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
                         >
-                            End Poll
-                        </button>
+                            
+                        </Button>
                     </div>
                 </div>
                 {index < pollsList.length - 1 && <div className="border-b border-gray-300 my-4"></div>}
@@ -243,15 +243,14 @@ function Home() {
 
 
     return (
-        <div className="gradient-background home-background min-h-screen flex flex-col items-center justify-center bg-gray-200 p-4 md:p-8">
+        <div className="welcome-background min-h-[80vh] flex items-center justify-center bg-gray-200">
             <div className=" homeContainer max-w-5xl w-full bg-white p-6 rounded-xl shadow-lg flex flex-col justify-between elevated-card">
 
                 <div className="text-center mb-10 header-style"> {/* Added text-center class */}
                     <div className="mb-0 text-right">
                         <Link to="/createPoll">
-                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
-                                Create New Poll
-                            </button>
+                            <Button text="Create Poll" type="submit">
+                            </Button>
                         </Link>
                     </div>
                     <h1 className="text-4xl font-bold text-gray-800 dashboard-title">FeedbackApp Dashboard</h1>
@@ -283,20 +282,19 @@ function Home() {
                             <FontAwesomeIcon icon={faPoll} className="text-gray-400" />
                         </div>
                     </div>
-                    <button
+                    <Button
+                        text="Participate"
                         onClick={fetchPollByCode}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
-                        Participate in Poll
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="userSection w-full flex justify-between items-center">
                     <div>
                         <h3 className="text-xl font-medium mb-2">{userEmail}</h3>
                     </div>
-                    <button onClick={handleLogout} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">
-                        Logout
-                    </button>
+                    <LogOutButton onClick={handleLogout} text="Logout">
+                    </LogOutButton>
                 </div>
             </div>
         </div>
