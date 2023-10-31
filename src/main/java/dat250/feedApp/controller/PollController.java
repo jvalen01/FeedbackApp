@@ -35,6 +35,8 @@ public class PollController {
     @Autowired
     private QuestionService questionService;
 
+    private DweetioController dweetioController = new DweetioController();
+
 
     @GetMapping
     public List<Poll> getAllPolls() {
@@ -100,7 +102,11 @@ public class PollController {
         String uniqueCode = PollCodeGenerator.generateCode();
         poll.setCode(uniqueCode);
 
-        return pollService.save(poll);
+        Poll savedPoll = pollService.save(poll);
+
+        dweetioController.sendToDweet(savedPoll);
+
+        return savedPoll;
     }
 
 
@@ -108,6 +114,7 @@ public class PollController {
     public ResponseEntity<Poll> updatePoll(@PathVariable Long id, @RequestBody Poll updatedPoll) {
         if (pollService.existsById(id)) {
             updatedPoll.setId(id);
+
             return ResponseEntity.ok(pollService.save(updatedPoll));
         } else {
             return ResponseEntity.notFound().build();
@@ -127,7 +134,12 @@ public class PollController {
     @PutMapping("/{id}/deactivate")
     public ResponseEntity<Poll> deactivatePoll(@PathVariable Long id) {
         if (pollService.existsById(id)) {
-            return ResponseEntity.ok(pollService.setPollActiveState(id, false));
+
+            ResponseEntity<Poll> responseEntity = ResponseEntity.ok(pollService.setPollActiveState(id, false));
+
+            dweetioController.sendToDweet(pollService.findById(id).get());
+
+            return responseEntity;
         } else {
             return ResponseEntity.notFound().build();
         }
