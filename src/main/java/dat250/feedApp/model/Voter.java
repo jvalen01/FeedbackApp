@@ -19,7 +19,7 @@ public class Voter {
 
     private String username;
 
-    @OneToMany
+    @OneToMany(mappedBy = "voter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vote> votes = new ArrayList<>();
 
     // Add vote to user's list

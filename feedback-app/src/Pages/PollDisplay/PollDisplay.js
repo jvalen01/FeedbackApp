@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
+import Firebase from "../../firebaseConfig";
+
+const firebaseInstance = new Firebase();
 
 function PollDisplay(props) {
     const { code } = useParams();
@@ -9,38 +12,65 @@ function PollDisplay(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/api/polls/code/${code}`)
-            .then(response => {
-                setPollData(response.data);
-            })
-            .catch(error => {
-                console.error("Error fetching poll:", error);
-            });
+        // Check if the user is logged in and get the ID token
+        const fetchTokenAndData = async () => {
+            let headers = {};
+
+            if (firebaseInstance.auth.currentUser) {
+                try {
+                    const idToken = await firebaseInstance.auth.currentUser.getIdToken(true);
+                    headers.Authorization = `Bearer ${idToken}`;
+                } catch (error) {
+                    console.error("Error getting ID token:", error);
+                }
+            }
+
+            axios.get(`http://localhost:8080/api/polls/code/${code}`, { headers })
+                .then(response => {
+                    console.log("Poll data display :", response.data);
+                    setPollData(response.data);
+                })
+                .catch(error => {
+                    if (error.response && error.response.status === 403) {
+                        alert("Unauthorized access. Please log in.");
+                        navigate('/login'); // redirect to the login page
+                    } else {
+                        console.error("Error fetching poll:", error);
+                    }
+                });
+        };
+
+        fetchTokenAndData();
+
     }, [code]);
 
     // Handle the form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Submitted Answer:", answer);
+
+        const loggedInUser = firebaseInstance.auth.currentUser;
 
         const vote = {
             answer: answer === 'Yes',
             question: {
                 id: pollData.question.id,
                 question: pollData.question.question
-            },
-            user: {
-                username: pollData.user.username
             }
-            // ... add other necessary properties such as user, etc.
         };
+
+        if (loggedInUser) {
+            vote.user = {
+                username: pollData.user.username
+            };
+        }
+
         console.log('Sending vote to backend:', vote);
 
 
         axios.post('http://localhost:8080/api/votes', vote)
             .then(response => {
                 console.log('Vote submitted successfully!', response.data);
-                navigate('/home')
+                navigate('/ThankYou');
 
                 // You may want to fetch the updated pollData again or redirect the user, etc.
             })
