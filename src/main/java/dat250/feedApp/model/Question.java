@@ -30,7 +30,6 @@ public class Question {
     private int totalVotes;
 
     @OneToOne(mappedBy = "question", cascade = CascadeType.ALL)
-    @JoinColumn(name = "poll_id") // this is the foreign key column in the Question table
     private Poll poll;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
