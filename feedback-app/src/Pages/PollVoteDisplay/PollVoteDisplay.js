@@ -5,7 +5,7 @@ import Firebase from "../../firebaseConfig";
 
 const firebaseInstance = new Firebase();
 
-function PollDisplay(props) {
+function PollVoteDisplay(props) {
     const { code } = useParams();
     const [pollData, setPollData] = useState(null);
     const [answer, setAnswer] = useState(''); // state to hold the answer input value
@@ -110,4 +110,4 @@ function PollDisplay(props) {
     );
 }
 
-export default PollDisplay;
+export default PollVoteDisplay;
