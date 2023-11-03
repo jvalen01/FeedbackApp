@@ -57,6 +57,8 @@ public class VoteController {
 
     @PostMapping
     public ResponseEntity<String> createVote(@RequestBody Vote vote) {
+        System.out.println("COMES HERE");
+        System.out.println(vote.toString());
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         rabbitTemplate.convertAndSend(exchange, routingkey, vote);
         webSocketService.sendMessage("Vote received and will be processed!");  // Optional: inform WebSocket subscribers

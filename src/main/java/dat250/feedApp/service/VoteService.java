@@ -2,6 +2,7 @@ package dat250.feedApp.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import dat250.feedApp.model.Question;
 import dat250.feedApp.model.Vote;
 import dat250.feedApp.model.Voter;
@@ -46,15 +47,51 @@ public class VoteService {
     }
     @RabbitListener(queues = "${rabbitmq.queue}")
     public void receiveMessage(String message) {
-        Vote vote = new Gson().fromJson(message, Vote.class);
+        try {
+            // Deserialization
+            logger.info("THIS IS THE MESSAGE: " + message);
 
-        System.out.println(message);
-        System.out.println(vote.getAnswer());
-        System.out.println(vote.getQuestion().getId());
-        System.out.println(vote.getUser().getUsername());
+            Vote vote = new Gson().fromJson(message, Vote.class);
 
-        saveVote(vote);
+            logger.info("Deserialized vote: " + vote);
+
+            // Check for null values and print the details
+            if (vote != null) {
+                System.out.println(message);
+
+                if (vote.getAnswer() != null) {
+                    System.out.println(vote.getAnswer());
+                } else {
+                    System.out.println("Vote answer is null");
+                }
+
+                if (vote.getQuestion() != null) {
+                    System.out.println(vote.getQuestion().getId());
+                } else {
+                    System.out.println("Vote question is null");
+                }
+
+                if (vote.getUser() != null) {
+                    System.out.println(vote.getUser().getUsername());
+                } else {
+                    System.out.println("Vote user is null");
+                }
+
+                // Save the vote
+                saveVote(vote);
+            } else {
+                System.out.println("Deserialized vote is null");
+            }
+        } catch (JsonSyntaxException e) {
+            System.out.println("Error during deserialization: " + e.getMessage());
+        } catch (NullPointerException e) {
+            System.out.println("Null pointer exception: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
     }
+
+
 
     public Vote saveVote(Vote vote) {
         User existingUser = null;

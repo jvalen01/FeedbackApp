@@ -27,12 +27,21 @@ public class Vote {
     @ManyToOne
     private IoTDevice ioTDevice;
 
-    @ManyToOne
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     @ManyToOne
     private Voter voter;
 
-
+    @Override
+    public String toString() {
+        return "Vote{" +
+                "id=" + id +
+                ", answer=" + answer +
+                ", question=" + question +
+                ", ioTDevice=" + ioTDevice +
+                ", user=" + user +
+                ", voter=" + voter +
+                '}';
+    }
 }
