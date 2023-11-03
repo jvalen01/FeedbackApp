@@ -32,7 +32,8 @@ public class Question {
     @OneToOne(mappedBy = "question", cascade = CascadeType.ALL)
     private Poll poll;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
+
     private List<Vote> votes = new ArrayList<>();
 
     @Override

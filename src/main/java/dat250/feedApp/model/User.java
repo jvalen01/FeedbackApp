@@ -15,6 +15,9 @@ import java.util.List;
 @Setter
 @Getter
 @Table(name = "AppUser")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User {
 
     @Id
@@ -29,7 +32,7 @@ public class User {
 
     private Boolean adminRights;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Vote> votes = new ArrayList<>();
 
     @JsonIgnore

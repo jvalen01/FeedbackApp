@@ -2,15 +2,29 @@ import React, { useState, useEffect } from 'react';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
+import WebSocket from '../../Components/WebSocket';
 
 function PollData() {
     const [pollData, setPollData] = useState(null);
     const { pollID } = useParams();
-
+    const webSocketData = WebSocket();
     const navigate = useNavigate();
+    const [wsMessage, setWsMessage] = useState("");
+    const [shareableLink, setShareableLink] = useState(null);
+    useEffect(() => {
+        console.log("WebSocket data in component:", webSocketData);
 
     // State variable to hold the link
-    const [shareableLink, setShareableLink] = useState(null);
+
+        if (webSocketData) {
+            if (webSocketData === "Hello World") {
+                setWsMessage(webSocketData);
+            } else {
+                const updatedPollData = JSON.parse(webSocketData);
+                setPollData(updatedPollData);
+            }
+        }
+    }, [webSocketData]);
 
     useEffect(() => {
         const fetchPollData = async () => {
@@ -61,6 +75,7 @@ function PollData() {
     // Render poll data with Tailwind styling
     return (
         <div className="w-4/5 max-w-6xl min-h-screen mx-auto p-8 bg-gray-100 shadow-md rounded-lg">
+            {wsMessage && <div className="mb-4 text-green-600">{wsMessage}</div>}
             <div className="flex items-center mb-6">
                 <h2 className="text-xl font-bold mr-2">Poll name:</h2>
                 <span className="text-xl">{pollData.name}</span>
@@ -128,6 +143,7 @@ function PollData() {
                 </Link>
             </div>
         </div>
+
     );
 }
 

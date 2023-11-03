@@ -6,6 +6,7 @@ import Firebase from "../../firebaseConfig";
 const firebaseInstance = new Firebase();
 
 function PollVoteDisplay(props) {
+
     const { code } = useParams();
     const [pollData, setPollData] = useState(null);
     const [answer, setAnswer] = useState(''); // state to hold the answer input value
@@ -29,6 +30,7 @@ function PollVoteDisplay(props) {
                 .then(response => {
                     console.log("Poll data display :", response.data);
                     setPollData(response.data);
+                    console.log("Username: " + response.data.question.poll.user.username);
                 })
                 .catch(error => {
                     if (error.response && error.response.status === 403) {
@@ -47,7 +49,10 @@ function PollVoteDisplay(props) {
     // Handle the form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        if (!pollData || !pollData.question || !pollData.question.poll || !pollData.question.poll.user) {
+            console.error("Poll data is not yet available.");
+            return;
+        }
         const loggedInUser = firebaseInstance.auth.currentUser;
 
         const vote = {
@@ -55,12 +60,15 @@ function PollVoteDisplay(props) {
             question: {
                 id: pollData.question.id,
                 question: pollData.question.question
+            },
+            user: {
+                username: pollData.question.poll.user.username
             }
         };
 
         if (loggedInUser) {
             vote.user = {
-                username: pollData.user.username
+                username: pollData.question.poll.user.username
             };
         }
 
@@ -111,3 +119,4 @@ function PollVoteDisplay(props) {
 }
 
 export default PollVoteDisplay;
+
