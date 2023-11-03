@@ -15,6 +15,9 @@ import java.util.List;
 @Setter
 @Getter
 @Table(name = "AppUser")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User {
 
     @Id

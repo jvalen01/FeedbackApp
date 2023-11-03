@@ -30,7 +30,7 @@ function PollVote(props) {
                 question: pollData.question.question
             },
             user: {
-                username: pollData.user.username
+                username: pollData.question.poll.user.username
             }
         };
         console.log('Sending vote to backend:', vote);
