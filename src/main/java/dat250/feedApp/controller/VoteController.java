@@ -1,6 +1,7 @@
 package dat250.feedApp.controller;
 
 import com.google.api.client.json.Json;
+import dat250.feedApp.model.Payload;
 import dat250.feedApp.model.Vote;
 import dat250.feedApp.model.Poll;
 import dat250.feedApp.service.VoteService;
@@ -54,11 +55,22 @@ public class VoteController {
 
     @Value("${rabbitmq.routingkey}")
     private String routingkey;
+public class RabbitVote{
+
+    public String username;
+    public Vote vote;
+
+    public RabbitVote(String username, Vote vote) {
+        this.username = username;
+        this.vote = vote;
+    }
+}
 
     @PostMapping
     public ResponseEntity<String> createVote(@RequestBody Vote vote) {
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
-        rabbitTemplate.convertAndSend(exchange, routingkey, vote);
+        RabbitVote Rvote = new RabbitVote(vote.getUser().toString(), vote);
+        rabbitTemplate.convertAndSend(exchange, routingkey, Rvote);
         webSocketService.sendMessage("Vote received and will be processed!");  // Optional: inform WebSocket subscribers
         return ResponseEntity.ok("Vote received and is being processed");
     }
@@ -68,8 +80,11 @@ public class VoteController {
     @PutMapping("/{id}")
     public ResponseEntity<Vote> updateVote(@PathVariable Long id, @RequestBody Vote updatedVote) {
         if (voteService.existsById(id)) {
-            updatedVote.setId(id);  // Ensure the ID is set to the one from the path
-            return ResponseEntity.ok(voteService.saveVote(updatedVote));
+            updatedVote.setId(id);
+            Payload payload = new Payload();
+            payload.username = updatedVote.getUser().toString();
+            payload.vote = updatedVote;// Ensure the ID is set to the one from the path
+            return ResponseEntity.ok(voteService.saveVote(payload));
         } else {
             return ResponseEntity.notFound().build();
         }

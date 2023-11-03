@@ -2,6 +2,7 @@ package dat250.feedApp.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import dat250.feedApp.model.Payload;
 import dat250.feedApp.model.Question;
 import dat250.feedApp.model.Vote;
 import dat250.feedApp.model.Voter;
@@ -46,48 +47,42 @@ public class VoteService {
     }
     @RabbitListener(queues = "${rabbitmq.queue}")
     public void receiveMessage(String message) {
-        Vote vote = new Gson().fromJson(message, Vote.class);
-
-        System.out.println(message);
-        System.out.println(vote.getAnswer());
-        System.out.println(vote.getQuestion().getId());
-        System.out.println(vote.getUser().getUsername());
-
-        saveVote(vote);
+        try {
+            Payload payload = new Gson().fromJson(message, Payload.class);
+            saveVote(payload);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
     }
 
-    public Vote saveVote(Vote vote) {
+    public Vote saveVote(Payload payload) {
+        Vote vote = payload.getVote();
+        String username = payload.getUsername();
+        System.out.println(username);
+        System.out.println(vote.toString());
+        System.out.println("LETS GO!");
         User existingUser = null;
 
         // Check if the vote's user is not null and its username is not null
-        if (vote.getUser() != null && vote.getUser().getUsername() != null && !vote.getUser().getUsername().isEmpty()) {
-            // This is an authenticated user
-            String username = vote.getUser().getUsername();
+
             existingUser = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
-
+        System.out.println("USER FOUND!");
+        System.out.println(existingUser.toString());
             vote.setUser(existingUser);
             existingUser.addVote(vote);
             userRepository.save(existingUser);
-        } else {
-            // This is an anonymous voter
-            Voter voter = new Voter();
-            voter.setUsername("Anonymous-" + System.currentTimeMillis()); // Giving a unique identifier for the anonymous voter
-            // First, save the voter entity
-            voter = voterRepository.save(voter);
-            voter.addVote(vote);
-            vote.setVoter(voter);  // Set the vote's voter to this anonymous voter
-        }
-
+        System.out.println(vote.getQuestion());
         // Fetch the current state of the Question entity from the database
         Question existingQuestion = questionRepository.findById(vote.getQuestion().getId())
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
         // Update the existingQuestion with the new vote
-        logger.info("Adding vote to existing question...");
+        System.out.println("Adding vote to existing question...");
         existingQuestion.addVote(vote); // Add vote to list
 
-        logger.info("Updating question's vote counts...");
+        System.out.println("Updating question's vote counts...");
         if (vote.getAnswer()) {
             existingQuestion.setYesVotes(existingQuestion.getYesVotes() + 1);
         } else {
@@ -95,11 +90,11 @@ public class VoteService {
         }
         existingQuestion.setTotalVotes(existingQuestion.getTotalVotes() + 1);
 
-        logger.info("Saving updated question...");
+        System.out.println("Saving updated question...");
         // Now save the updated question
         questionRepository.save(existingQuestion);
 
-        logger.info("Saving vote...");
+        System.out.println("Saving vote...");
         // Now save the vote
         System.out.println("SAVE!");
         return voteRepository.save(vote);

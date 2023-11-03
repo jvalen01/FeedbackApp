@@ -33,7 +33,7 @@ public class Question {
     @JoinColumn(name = "poll_id") // this is the foreign key column in the Question table
     private Poll poll;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Vote> votes = new ArrayList<>();
 
     @Override
