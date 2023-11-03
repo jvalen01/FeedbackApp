@@ -69,7 +69,7 @@ public class VoteController {
     public ResponseEntity<Vote> updateVote(@PathVariable Long id, @RequestBody Vote updatedVote) {
         if (voteService.existsById(id)) {
             updatedVote.setId(id);  // Ensure the ID is set to the one from the path
-            return ResponseEntity.ok(voteService.saveVote("FIX LATER"));
+            return ResponseEntity.ok(voteService.saveVote(updatedVote));
         } else {
             return ResponseEntity.notFound().build();
         }
