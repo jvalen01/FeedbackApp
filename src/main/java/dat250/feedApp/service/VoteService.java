@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import dat250.feedApp.model.Payload;
 import com.google.gson.JsonSyntaxException;
-
 import dat250.feedApp.model.Question;
 import dat250.feedApp.model.Vote;
 import dat250.feedApp.model.Voter;
@@ -72,30 +71,31 @@ public class VoteService {
         existingUser.addVote(vote);
         userRepository.save(existingUser);
 
-    // Fetch the current state of the Question entity from the database
-    Question existingQuestion = questionRepository.findById(vote.getQuestion().getId())
-            .orElseThrow(() -> new RuntimeException("Question not found"));
+        Question existingQuestion = questionRepository.findById(vote.getQuestion().getId())
+                .orElseThrow(() -> new RuntimeException("Question not found"));
 
-    // Update the existingQuestion with the new vote
+        // Update the existingQuestion with the new vote
         logger.info("Adding vote to existing question...");
         existingQuestion.addVote(vote); // Add vote to list
-
-        logger.info("Updating question's vote counts...");
         if (vote.getAnswer()) {
-        existingQuestion.setYesVotes(existingQuestion.getYesVotes() + 1);
-    } else {
-        existingQuestion.setNoVotes(existingQuestion.getNoVotes() + 1);
-    }
+            existingQuestion.setYesVotes(existingQuestion.getYesVotes() + 1);
+        } else {
+            existingQuestion.setNoVotes(existingQuestion.getNoVotes() + 1);
+        }
         existingQuestion.setTotalVotes(existingQuestion.getTotalVotes() + 1);
 
         logger.info("Saving updated question...");
-    // Now save the updated question
+        // Now save the updated question
         questionRepository.save(existingQuestion);
 
         logger.info("Saving vote...");
-    // Now save the vote
+        // Now save the vote
         return voteRepository.save(vote);
     }
+
+
+
+
 
     public void deleteVote(Long id) {
         voteRepository.deleteById(id);

@@ -68,9 +68,6 @@ public class RabbitVote{
 
     @PostMapping
     public ResponseEntity<String> createVote(@RequestBody Vote vote) {
-        System.out.println("COMES HERE");
-        System.out.println(vote.toString());
-        System.out.println("User: " + vote.getUser().toString());
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         RabbitVote Rvote = new RabbitVote(vote.getUser().toString(), vote);
         rabbitTemplate.convertAndSend(exchange, routingkey, Rvote);
