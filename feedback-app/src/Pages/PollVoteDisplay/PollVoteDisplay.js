@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
 import Firebase from "../../firebaseConfig";
-
+import Button from "../../Components/Button";
+import "../../styles/components.css"
 const firebaseInstance = new Firebase();
 
 function PollVoteDisplay(props) {
@@ -92,7 +93,8 @@ function PollVoteDisplay(props) {
     }
 
     return (
-        <div className="bg-gray-100 p-8 rounded-md shadow-lg max-w-lg mx-auto mt-10">
+        <div className="welcome-background min-h-[80vh] flex items-center justify-center bg-gray-200">
+            <div className="beigeBox">
             <h1 className="text-2xl font-bold mb-4">{pollData.name}</h1>
             <h2 className="text-xl mb-6">{pollData.question.question}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -110,10 +112,10 @@ function PollVoteDisplay(props) {
                         No
                     </button>
                 </div>
-                <button type="submit" className="bg-blue-500 text-white p-4 w-full rounded-md hover:bg-blue-600">
-                    Submit Answer
-                </button>
+                <Button text="Submit" type="submit">
+                </Button>
             </form>
+        </div>
         </div>
     );
 }
